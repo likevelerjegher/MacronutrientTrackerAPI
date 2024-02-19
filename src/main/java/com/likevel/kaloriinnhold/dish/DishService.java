@@ -13,13 +13,17 @@ import java.util.Optional;
 @Service
 public class DishService implements DishRepo{
 
+    private DishRepository dishRepository;
+
     @Value("${edamam.api.appId}")
     private String appId;
     @Value("${edamam.api.appKey}")
     private String appKey;
 
     @Autowired
-    private DishRepository dishRepository;
+    public DishService(DishRepository dishRepository) {
+        this.dishRepository = dishRepository;
+    }
 
     public ResponseEntity<Object> getNutritionalData(String name, String weight) {
         String apiUrl = "https://api.edamam.com/api/nutrition-data";
