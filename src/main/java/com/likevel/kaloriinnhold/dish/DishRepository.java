@@ -8,5 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface DishRepository extends MongoRepository<Dish, ObjectId> {
-    Optional<Dish> findMovieByName(String name);
+    Optional<Dish> findDishByName(String name);
+
 }
