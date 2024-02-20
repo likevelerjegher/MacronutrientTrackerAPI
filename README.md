@@ -4,5 +4,5 @@
 
 GET endpoint has been added that accepts input parameters (name/weight) as queryParams in the URL and returns the result (detailed nutritional content of the ingredient) as JSON.
 ```
-http://localhost:8080/dish/calculate?name=(ingredient, you want to look for)&weight=(gramms of the product)
+http://localhost:8080/dish/calculate?name=(ingredient, you want to look for)&weight=(weight of the ingredient)
 ```
