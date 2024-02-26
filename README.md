@@ -1,6 +1,6 @@
 # kaloriinnhold
 
-##This repository contains the source code for the Kaloriinnhold application, which is a Java-based backend service that calculates nutritional data for dishes using the Edamam API.
+## This repository contains the source code for the Kaloriinnhold application, which is a Java-based backend service that calculates nutritional data for dishes using the Edamam API.
 
 The programm takes `name` and `weight` of the ingredient in grams, then sends bask JSON with its detailed nutritional content.
 
@@ -9,11 +9,11 @@ GET endpoint has been added that accepts input parameters (name/weight) as query
 ```
 http://localhost:8080/dish/calculate?name=(ingredient, you want to look for)&weight=(weight of the ingredient)
 ```
-#DishController
+# DishController
 
 The DishController class is responsible for handling incoming HTTP requests related to dish calculations. It utilizes the DishService to retrieve nutritional data based on dish name and weight.
 
-#Endpoints
+# Endpoints
 GET /calculate
 Parameters:
 name (String): The name of the dish.
@@ -44,8 +44,8 @@ These properties are injected using @Value annotation from the application prope
 Usage
 To use this application, make sure to configure the Edamam API credentials (appId and appKey) in your application properties file. Then, you can run the application and access the /calculate endpoint to get nutritional data for a specific dish.
 
-Dependencies
-Spring Boot
-Spring Web
-Spring Data JPA
-RestTemplate
+# Dependencies
++ Spring Boot
++ Spring Web
++ Spring Data JPA
++ RestTemplate
