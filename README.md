@@ -1,6 +1,6 @@
 # kaloriinnhold
 
-## This repository contains the source code for the Kaloriinnhold application, which is a Java-based backend service that calculates nutritional data for dishes using the Edamam API.
+# This repository contains the source code for the Kaloriinnhold application, which is a Java-based backend service that calculates nutritional data for dishes using the Edamam API.
 
 The programm takes `name` and `weight` of the ingredient in grams, then sends bask JSON with its detailed nutritional content.
 
