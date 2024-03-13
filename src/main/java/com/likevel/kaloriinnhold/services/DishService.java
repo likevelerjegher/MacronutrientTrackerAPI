@@ -2,7 +2,6 @@ package com.likevel.kaloriinnhold.services;
 
 import com.likevel.kaloriinnhold.entity.DishEntity;
 import com.likevel.kaloriinnhold.repositories.DishRepository;
-import com.likevel.kaloriinnhold.repositories.IngredientRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,33 +56,33 @@ public class DishService{
     }
 //Put
     @Transactional
-    public void updateDish(Long dishId, String name,
-                           Float fats,
-                           Float carbs,
-                           Float proteins,
-                           Integer calories, Float servings){
+    public void updateDish(Long dishId, String dishName,
+                           Float dishFats,
+                           Float dishCarbs,
+                           Float dishProteins,
+                           Integer dishCalories, Float servings){
         DishEntity dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalStateException(
                         "dish with id " + dishId + "is not updated (does not exist)."));
-        if(name != null && !name.isEmpty() && !Objects.equals(dish.getName(), name)){
-            Optional<DishEntity> dishOptional = dishRepository.findDishByName(name);
+        if(dishName != null && !dishName.isEmpty() && !Objects.equals(dish.getName(), dishName)){
+            Optional<DishEntity> dishOptional = dishRepository.findDishByName(dishName);
             if (dishOptional.isPresent()){
                 throw new IllegalStateException("dish with this name already exists.");
             }
-            dish.setName(name);
+            dish.setName(dishName);
         }
 
-        if (fats != null && fats > 0){
-            dish.setFats(fats);
+        if (dishFats != null && dishFats > 0){
+            dish.setFats(dishFats);
         }
-        if (carbs != null && carbs > 0){
-            dish.setCarbs(carbs);
+        if (dishCarbs != null && dishCarbs > 0){
+            dish.setCarbs(dishCarbs);
         }
-        if (proteins != null && proteins > 0){
-            dish.setProteins(proteins);
+        if (dishProteins != null && dishProteins > 0){
+            dish.setProteins(dishProteins);
         }
-        if (calories != null && calories > 0){
-            dish.setCalories(calories);
+        if (dishCalories != null && dishCalories > 0){
+            dish.setCalories(dishCalories);
         }
         if (servings != null && servings > 0){
             dish.setServings(servings);

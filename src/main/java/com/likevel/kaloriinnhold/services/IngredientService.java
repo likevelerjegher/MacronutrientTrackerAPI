@@ -2,14 +2,9 @@ package com.likevel.kaloriinnhold.services;
 
 import com.likevel.kaloriinnhold.entity.DishEntity;
 import com.likevel.kaloriinnhold.entity.IngredientEntity;
-import com.likevel.kaloriinnhold.exception.IngredientAlreadyExistException;
-import com.likevel.kaloriinnhold.exception.IngredientNotFoundException;
-
 import com.likevel.kaloriinnhold.repositories.DishRepository;
 import com.likevel.kaloriinnhold.repositories.IngredientRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,24 +60,27 @@ public class IngredientService {
     }
 //Put
     @Transactional
-    public void updateIngredient(Long ingredientId, String name,
-                                 Float fats, Float carbs, Float proteins,
-                                 Integer calories, Integer weight){
+    public void updateIngredient(Long ingredientId, String ingredientName,
+                                 Float ingredientFats,
+                                 Float ingredientCarbs,
+                                 Float ingredientProteins,
+                                 Integer ingredientCalories,
+                                 Integer ingredientWeight){
         IngredientEntity ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalStateException(
                         "ingredient with id " + ingredientId + " does not exist, therefore can't update it."));
-        if(name != null && !name.isEmpty() && !Objects.equals(ingredient.getName(),name)){
-            Optional<IngredientEntity> ingredientOptional = Optional.ofNullable(ingredientRepository.findIngredientsByName(name));
+        if(ingredientName != null && !ingredientName.isEmpty() && !Objects.equals(ingredient.getName(),ingredientName)){
+            Optional<IngredientEntity> ingredientOptional = Optional.ofNullable(ingredientRepository.findIngredientsByName(ingredientName));
             if(ingredientOptional.isPresent()){
                 throw new IllegalStateException("ingredient with this name already exists.");
             }
-            ingredient.setName(name);
+            ingredient.setName(ingredientName);
         }
-        if (fats != null && fats > 0) ingredient.setFats(fats);
-        if (carbs != null && carbs > 0) ingredient.setCarbs(carbs);
-        if (proteins != null && proteins > 0) ingredient.setProteins(proteins);
-        if (calories != null && calories > 0) ingredient.setCalories(calories);
-        if (weight != null && weight > 0) ingredient.setWeight(weight);
+        if (ingredientFats != null && ingredientFats > 0) ingredient.setFats(ingredientFats);
+        if (ingredientCarbs != null && ingredientCarbs > 0) ingredient.setCarbs(ingredientCarbs);
+        if (ingredientProteins != null && ingredientProteins > 0) ingredient.setProteins(ingredientProteins);
+        if (ingredientCalories != null && ingredientCalories > 0) ingredient.setCalories(ingredientCalories);
+        if (ingredientWeight != null && ingredientWeight > 0) ingredient.setWeight(ingredientWeight);
     }
 //Delete
     public void deleteIngredient(Long ingredientId){

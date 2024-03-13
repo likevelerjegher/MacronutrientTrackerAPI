@@ -2,10 +2,8 @@ package com.likevel.kaloriinnhold.controllers;
 
 import com.likevel.kaloriinnhold.entity.DishEntity;
 import com.likevel.kaloriinnhold.entity.IngredientEntity;
-import com.likevel.kaloriinnhold.exception.IngredientNotFoundException;
 import com.likevel.kaloriinnhold.services.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
