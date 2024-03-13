@@ -65,3 +65,7 @@ Well, since that's the case, I can't miss the opportunity to recommend the playl
 https://open.spotify.com/playlist/7dgLdS9xl9U2ZU4QHmXnQ8?si=4c7108f4d4d24578
 ```
 If you like it, do not hesitate to save it.
+
+<p align="center">
+   <img src="https://usagif.com/wp-content/uploads/gif/hamster-wheel-32.gif" alt="animated" />
+</p>
