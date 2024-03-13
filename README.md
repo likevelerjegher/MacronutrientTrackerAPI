@@ -1,6 +1,10 @@
 # kaloriinnhold
 
-This repository contains the source code for the Kaloriinnhold application, which is a Java-based backend service that calculates nutritional data for dishes using the Edamam API.
+"Kaloriinnhold" is a project successfully integrated with MySQL database for efficient data storage and management. A one-to-many relationship using the @OneToMany annotation has been implemented, providing efficient management of linked data. Also implemented many-to-many relationship using @ManyToMany annotation, which significantly expands the possibilities of working with data and its relationships.
+
+CRUD operations are implemented for all entities, providing full and convenient control over information. Users are able to create, read, update and delete records about different dishes and their ingredients. A query mechanism using queryParams is supported for more flexible and accurate data retrieval, and the results are provided in JSON format, providing easy interaction with the application.
+
+Thus, the project not only successfully integrated the database and realized the relationships between entities, but also provided a complete set of CRUD operations for data management, providing users with an intuitive and efficient interface to work about the existing dishes.
 
 GET endpoint has been added that accepts input parameters (`name` and `weight`) as queryParams in the URL and returns the result (detailed nutritional content of the ingredient) as JSON.
 
