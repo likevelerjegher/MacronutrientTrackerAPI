@@ -37,19 +37,19 @@ The application will run on `http://localhost:8080`.
 - `GET /api/comments`: get information about comments
 - `GET /api/dishes/{dishId}/comments`: get comments for a dish
 - `POST /api/dishes/{dishId}/comments`: add a new comment for a dish
-- `PUT /api/comments/{id}`: Update a comment
-- Delete comments for a dish: DELETE /api/dishes/{dishId}/comments
-- Delete a specific comment for a dish: DELETE /api/dishes/{dishId}/comments/{commentId}
-- Get dish information: GET /api
-- Get a dish by ID: GET /api/{id}
-- Create a new dish: POST /api
-- Update a dish: PUT /api/{id}
-- Delete a dish: DELETE /api/{id}
-- Delete all dishes: DELETE /api
-- Get ingredients for a dish: GET /api/dishes/{dishId}/ingredients
-- Get dishes by ingredient: GET /api/ingredients/{ingredientId}/dishes
-- Get ingredient information: GET /api/ingredients
-- Add a new ingredient to a dish: POST /api/dishes/{dishId}/ingredients
-- Update an ingredient: PUT /api/ingredients/{id}
-- Delete ingredient: DELETE /api/ingredients/{id}
-- Remove an ingredient from a dish: DELETE /api/dishes/{dishId}/ingredients/{ingredientId}
+- `PUT /api/comments/{id}`: update a comment
+- `DELETE /api/dishes/{dishId}/comments`: delete comments for a dish
+- `DELETE /api/dishes/{dishId}/comments/{commentId}`: delete a specific comment for a dish
+- `GET /api`: get dish information
+- `GET /api/{id}`: get a dish by ID
+- `POST /api`: create a new dish
+- `PUT /api/{id}`: update a dish
+- `DELETE /api/{id}`: delete a dish
+- `DELETE /api`: delete all dishes
+- `GET /api/dishes/{dishId}/ingredients`: get ingredients for a dish
+- `GET /api/ingredients/{ingredientId}/dishes`: get dishes by ingredient
+- `GET /api/ingredients`: get ingredient information
+- `POST /api/dishes/{dishId}/ingredients`: add a new ingredient to a dish
+- `PUT /api/ingredients/{id}`: update an ingredient
+- `DELETE /api/ingredients/{id}`: delete ingredient
+- `DELETE /api/dishes/{dishId}/ingredients/{ingredientId}`: remove an ingredient from a dish
