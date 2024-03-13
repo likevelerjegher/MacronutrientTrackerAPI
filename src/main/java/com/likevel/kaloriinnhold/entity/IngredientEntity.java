@@ -30,5 +30,5 @@ public class IngredientEntity {
 
     @ManyToMany(mappedBy = "ingredients")
     @JsonIgnore
-    private List<DishEntity> dish;
+    private List<DishEntity> dishes;
 }

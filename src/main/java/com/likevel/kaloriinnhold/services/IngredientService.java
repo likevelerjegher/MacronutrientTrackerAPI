@@ -20,14 +20,23 @@ public class IngredientService {
     private IngredientRepository ingredientRepository;
     @Autowired
     private DishRepository dishRepository;
-
-    public Ingredient getIngredientById(Long id) throws IngredientNotFoundException {
-        IngredientEntity ingredient = ingredientRepository.findById(id).get();
-        if (ingredient == null){
-            throw new IngredientNotFoundException("Ingredient not found.");
-        }
-        return Ingredient.toModel(ingredient);
+//Get
+    public List<IngredientEntity> getIngredientsByDishId(Long dishId){
+        DishEntity dish = dishRepository.findById(dishId)
+                .orElseThrow(() -> new IllegalStateException(
+                        "dish with id " + dishId + " does not exist, can't view its ingredients."));
+        return dish.getIngredients();
     }
+    public List<DishEntity> getDishesByIngredientId(Long ingredientId){
+        IngredientEntity ingredient = ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new IllegalStateException(
+                        "ingredient with id " + ingredientId + " does not exist, can't view its dishes."));
+        return ingredient.getDishes();
+    }
+    public List<IngredientEntity> getIngredients(){
+        return ingredientRepository.findAll();
+    }
+//Post
     public Ingredient createIngredient(IngredientEntity ingredient, Long dishId) throws IngredientAlreadyExistException {
         if (ingredientRepository.findByName(ingredient.getName()) != null){
             throw new IngredientAlreadyExistException("Ingredient with this name already exists.");
@@ -37,12 +46,13 @@ public class IngredientService {
         ingredient.setDish(currentDishes);
         return Ingredient.toModel(ingredientRepository.save(ingredient));
     }
+//Put
     public Ingredient updateIngredientNutritionalData(Long id){
         IngredientEntity ingredient = ingredientRepository.findById(id).get();
 
         return Ingredient.toModel(ingredientRepository.save(ingredient));
     }
-
+//Delete
     public Long deleteIngredient(Long id){
         ingredientRepository.deleteById(id);
         return id;
