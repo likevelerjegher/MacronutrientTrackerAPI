@@ -57,3 +57,11 @@ The application will run on `http://localhost:8080`.
 - `PUT /api/ingredients/{id}`: update an ingredient
 - `DELETE /api/ingredients/{id}`: delete ingredient
 - `DELETE /api/dishes/{dishId}/ingredients/{ingredientId}`: remove an ingredient from a dish
+
+# Remarks
+If you've made it this far, you're indeed interested in this project, I appreciate it. 
+Well, since that's the case, I can't miss the opportunity to recommend the playlist of my recent music favorites. 
+```
+https://open.spotify.com/playlist/7dgLdS9xl9U2ZU4QHmXnQ8?si=4c7108f4d4d24578
+```
+If you like it, do not hesitate to save it.
