@@ -17,15 +17,20 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class IngredientService {
-    @Autowired
     private IngredientRepository ingredientRepository;
-    @Autowired
     private DishRepository dishRepository;
+    @Autowired
+    public IngredientService(IngredientRepository ingredientRepository,
+                             DishRepository dishRepository){
+        this.ingredientRepository = ingredientRepository;
+        this.dishRepository = dishRepository;
+    }
+
 //Get
     public List<IngredientEntity> getIngredientsByDishId(Long dishId){
         DishEntity dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalStateException(
-                        "dish with id " + dishId + " does not exist, can't view its ingredients."));
+                        "dish '" + dishId + "' does not exist, can't view its ingredients."));
         return dish.getIngredients();
     }
     public List<DishEntity> getDishesByIngredientId(Long ingredientId){
@@ -41,7 +46,7 @@ public class IngredientService {
     public void addNewIngredientByDishId(Long dishId, IngredientEntity ingredientRequest){
         DishEntity dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalIdentifierException(
-                        "dish with id " + dishId + " does not exist, can't add ingredient to it."));
+                        "dish id: " + dishId + " does not exist, can't add ingredient to it."));
         IngredientEntity ingredient = ingredientRepository. findIngredientsByName(ingredientRequest.getName());
         if(dish.getIngredients().stream().noneMatch(ingredientFunc -> ingredientFunc.getName().equals(ingredientRequest.getName()))){
             if (ingredient != null){
@@ -68,7 +73,7 @@ public class IngredientService {
                                  Integer ingredientWeight){
         IngredientEntity ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalStateException(
-                        "ingredient with id " + ingredientId + " does not exist, therefore can't update it."));
+                        "ingredient id: " + ingredientId + " does not exist, therefore can't update it."));
         if(ingredientName != null && !ingredientName.isEmpty() && !Objects.equals(ingredient.getName(),ingredientName)){
             Optional<IngredientEntity> ingredientOptional = Optional.ofNullable(ingredientRepository.findIngredientsByName(ingredientName));
             if(ingredientOptional.isPresent()){
@@ -97,10 +102,10 @@ public class IngredientService {
     public void deleteIngredientFromDish(Long dishId, Long ingredientId){
         DishEntity dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalStateException(
-                        "dish with id " + ingredientId + " does not exist, therefore cannot delete it."));
+                        "dish " + ingredientId + " does not exist, therefore cannot delete it."));
         IngredientEntity ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalStateException(
-                        "ingredient with id " + ingredientId + " does not exist, therefore cannot delete it"));
+                        "ingredient id: " + ingredientId + " does not exist, therefore cannot delete it"));
         dish.getIngredients().remove(ingredient);
         dishRepository.save(dish);
     }

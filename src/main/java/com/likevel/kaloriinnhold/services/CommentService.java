@@ -32,7 +32,7 @@ public class CommentService {
     public void addNewCommentByDishId (Long dishId, CommentEntity commentRequest){
         DishEntity dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalStateException(
-                        "dish with id " + dishId + " does not exist, therefore cannot add new comment."));
+                        "dish '" + dishId + "' does not exist, therefore cannot add new comment."));
         if (dish.getComments().stream().noneMatch(comment->comment.getCommentText().equals(commentRequest.getCommentText()))){
             dish.getComments().add(commentRequest);
             commentRepository.save(commentRequest);
@@ -64,17 +64,17 @@ public class CommentService {
     public void deleteCommentsByDishId(Long dishId){
         DishEntity dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalStateException(
-                        "dish with id " + dishId + " does not exist, therefore comments cannot be deleted"));
+                        "dish id " + dishId + " does not exist, therefore comments cannot be deleted"));
         dish.getComments().clear();
         dishRepository.save(dish);
     }
     public void deleteCommentFromDishId(Long dishId, Long commentId){
         DishEntity dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalStateException(
-                        "dish with id " + dishId + " does not exist, therefore comment cannot be deleted"));
+                        "dish " + dishId + " does not exist, therefore comment cannot be deleted"));
         CommentEntity comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalStateException(
-                        "comment with id " + commentId + " does not exist, therefore cannot be deleted"));
+                        "comment id: " + commentId + " does not exist, therefore cannot be deleted"));
         dish.getComments().remove(comment);
         dishRepository.save(dish);
     }

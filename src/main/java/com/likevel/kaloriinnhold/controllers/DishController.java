@@ -1,8 +1,6 @@
 package com.likevel.kaloriinnhold.controllers;
 
 import com.likevel.kaloriinnhold.entity.DishEntity;
-import com.likevel.kaloriinnhold.exception.DishAlreadyExistException;
-import com.likevel.kaloriinnhold.exception.DishNotFoundException;
 import com.likevel.kaloriinnhold.services.DishService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

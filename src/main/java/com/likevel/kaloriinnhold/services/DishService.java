@@ -3,7 +3,6 @@ package com.likevel.kaloriinnhold.services;
 import com.likevel.kaloriinnhold.entity.DishEntity;
 import com.likevel.kaloriinnhold.repositories.DishRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -16,10 +15,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class DishService{
-    @Autowired
+
     private final DishRepository dishRepository;
+    @Autowired
+    public DishService(DishRepository dishRepository){
+        this.dishRepository = dishRepository;
+    }
 
     @Value("${edamam.api.appId}")
     private String appId;
@@ -43,7 +45,7 @@ public class DishService{
     public DishEntity getDishById(Long dishId){
         return dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalStateException(
-                        "dish with id " + dishId + "is not found (does not exist)."));
+                        "dish '" + dishId + "' is not found (does not exist)."));
     }
 //Post
     public void createNewDish(DishEntity dish){
@@ -93,7 +95,7 @@ public class DishService{
         boolean exists = dishRepository.existsById(dishId);
         if (!exists){
             throw new IllegalStateException(
-                    "dish with id " + dishId + "is not deleted (does not exist)");
+                    "dish id: " + dishId + "is not deleted (does not exist)");
         }
         dishRepository.deleteById(dishId);
     }
