@@ -1,12 +1,9 @@
 package com.likevel.kaloriinnhold.services;
 
 import com.likevel.kaloriinnhold.entity.DishEntity;
-import com.likevel.kaloriinnhold.entity.IngredientEntity;
-import com.likevel.kaloriinnhold.exception.DishAlreadyExistException;
-import com.likevel.kaloriinnhold.exception.DishNotFoundException;
-import com.likevel.kaloriinnhold.model.Dish;
 import com.likevel.kaloriinnhold.repositories.DishRepository;
 import com.likevel.kaloriinnhold.repositories.IngredientRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,19 +12,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class DishService{
     @Autowired
     private final DishRepository dishRepository;
-    @Autowired
-    private final IngredientRepository ingredientRepository;
 
     @Value("${edamam.api.appId}")
     private String appId;
     @Value("${edamam.api.appKey}")
     private String appKey;
 
+//Get
     public ResponseEntity<Object> getNutritionalData(String name, Long weight) {
         String apiUrl = "https://api.edamam.com/api/nutrition-data";
         String url = "%s?app_id=%s&app_key=%s&nutrition-type=cooking&ingr=%s%%%dg".formatted(apiUrl, appId, appKey, name, weight);
@@ -38,33 +38,68 @@ public class DishService{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid dish. Please check the spelling of the ingredient and try again.");
         }
     }
+    public List<DishEntity> getDishes(){
+        return dishRepository.findAll();
+    }
+    public DishEntity getDishById(Long dishId){
+        return dishRepository.findById(dishId)
+                .orElseThrow(() -> new IllegalStateException(
+                        "dish with id " + dishId + "is not found (does not exist)."));
+    }
+//Post
+    public void createNewDish(DishEntity dish){
+        Optional<DishEntity> dishOptional = dishRepository
+                .findDishByName(dish.getName());
+        if(dishOptional.isPresent()){
+            throw new IllegalStateException("dish with this name already exists.");
+        }
+        dishRepository.save(dish);
+    }
+//Put
+    @Transactional
+    public void updateDish(Long dishId, String name,
+                           Float fats,
+                           Float carbs,
+                           Float proteins,
+                           Integer calories, Float servings){
+        DishEntity dish = dishRepository.findById(dishId)
+                .orElseThrow(() -> new IllegalStateException(
+                        "dish with id " + dishId + "is not updated (does not exist)."));
+        if(name != null && !name.isEmpty() && !Objects.equals(dish.getName(), name)){
+            Optional<DishEntity> dishOptional = dishRepository.findDishByName(name);
+            if (dishOptional.isPresent()){
+                throw new IllegalStateException("dish with this name already exists.");
+            }
+            dish.setName(name);
+        }
 
-    public Dish newDish(DishEntity dish) throws DishAlreadyExistException {
-        if (dishRepository.findByName(dish.getName()) != null){
-            throw new DishAlreadyExistException("Dish with this name already exists.");
+        if (fats != null && fats > 0){
+            dish.setFats(fats);
         }
-        return Dish.toModel(dishRepository.save(dish));
-    }
-//    public Dish addIngredientToDish(Long dishId, Long ingredientId) throws DishNotFoundException {
-//        DishEntity dish = dishRepository.findById(dishId).get();
-//        if (dish == null){
-//            throw new DishNotFoundException("Dish is not found.");
-//        }
-//        IngredientEntity ingredient = ingredientRepository.findById(ingredientId).get();
-//        dish.setIngredients(ingredient);
-//        return Dish.toModel(dishRepository.save(dish));
-//
-//    }
-    public Dish getDishById(Long id) throws DishNotFoundException {
-        DishEntity dish = dishRepository.findById(id).get();
-        if (dish == null){
-            throw new DishNotFoundException("Dish is not found.");
+        if (carbs != null && carbs > 0){
+            dish.setCarbs(carbs);
         }
-        return Dish.toModel(dish);
+        if (proteins != null && proteins > 0){
+            dish.setProteins(proteins);
+        }
+        if (calories != null && calories > 0){
+            dish.setCalories(calories);
+        }
+        if (servings != null && servings > 0){
+            dish.setServings(servings);
+        }
     }
-    public Long deleteDish(Long id){
-        dishRepository.deleteById(id);
-        return id;
+//Delete
+    public void deleteDish(Long dishId){
+        boolean exists = dishRepository.existsById(dishId);
+        if (!exists){
+            throw new IllegalStateException(
+                    "dish with id " + dishId + "is not deleted (does not exist)");
+        }
+        dishRepository.deleteById(dishId);
+    }
+    public void deleteDishes(){
+        dishRepository.deleteAll();
     }
 
 }

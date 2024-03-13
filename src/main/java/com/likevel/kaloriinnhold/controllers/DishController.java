@@ -9,11 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/dish")
+@RequestMapping("/api")
 @AllArgsConstructor
 public class DishController {
-
+//Get
     private final DishService dishService;
 
     @GetMapping("/calculate")
@@ -23,42 +25,38 @@ public class DishController {
 
     }
     @GetMapping
-    public ResponseEntity<Object> getDishById(@RequestParam(name="id") Long id){
-        try {
-            return ResponseEntity.ok(dishService.getDishById(id));
-        }catch (DishNotFoundException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body("smthing went wrong.");
-        }
+    public List<DishEntity> getDishes(){
+        return dishService.getDishes();
     }
-    @PostMapping("/new")
-    public ResponseEntity newDish(@RequestBody DishEntity dish){
-        try {
-            dishService.newDish(dish);
-            return ResponseEntity.ok("everything's fine, the dish has been saved.");
-        }catch (DishAlreadyExistException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body("smthing went wrong.");
-        }
+    @GetMapping("/{id}")
+    public DishEntity getDishById(@PathVariable("id") Long dishId){
+        return dishService.getDishById(dishId);
     }
-//    @PutMapping("/{id}")
-//    public ResponseEntity addIngredientToDish(@PathVariable Long dishId, @RequestParam Long ingredientId){
-//        try {
-//            dishService.addIngredientToDish(dishId, ingredientId);
-//            return ResponseEntity.ok("everything's fine, the ingredient has been added.");
-//        }catch (Exception e){
-//            return ResponseEntity.badRequest().body("smthing went wrong.");
-//        }
-//    }
+//Post
+    @PostMapping
+    public void createNewDish(@RequestBody DishEntity dish){
+        dishService.createNewDish(dish);
+    }
+//Put
+    @PutMapping("/{id}")
+    public void updateDish(@PathVariable("id") Long dishId,
+                           @RequestParam(required = false) String name,
+                           @RequestParam(required = false) Float fats,
+                           @RequestParam(required = false) Float carbs,
+                           @RequestParam(required = false) Float proteins,
+                           @RequestParam(required = false) Integer calories,
+                           @RequestParam(required = false) Float servings){
+        dishService.updateDish(dishId, name, fats, carbs, proteins, calories, servings);
+    }
+//Delete
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteDish(@PathVariable Long id){
-        try {
-            return ResponseEntity.ok(dishService.deleteDish(id));
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body("smthing went wrong.");
-        }
+    public void deleteDish(@PathVariable("id") Long dishId){
+        dishService.deleteDish(dishId);
+
+    }
+    @DeleteMapping
+    public void deleteDishes(){
+        dishService.deleteDishes();
     }
 
 }

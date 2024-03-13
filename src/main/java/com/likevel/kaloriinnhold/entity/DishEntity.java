@@ -17,15 +17,15 @@ public class DishEntity {
     private String name;
     @Column(name = "fats")
     private Float fats;
-    @Column(name = "proteins")
-    private Float proteins;
     @Column(name = "carbs")
     private Float carbs;
+    @Column(name = "proteins")
+    private Float proteins;
 
     @Column(name = "calories")
     private Integer calories;
     @Column(name = "servings")
-    private Integer servings;
+    private Float servings;
 
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "dish_id")

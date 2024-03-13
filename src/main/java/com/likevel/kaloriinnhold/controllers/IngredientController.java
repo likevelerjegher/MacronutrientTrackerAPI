@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/ingr")
+@RequestMapping("/api")
 public class IngredientController {
     @Autowired
     private IngredientService ingredientService;
