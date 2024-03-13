@@ -1,88 +1,36 @@
 package com.likevel.kaloriinnhold.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Data;
 
+import java.util.List;
 
+@Data
 @Entity
+@Table(name = "ingredient")
 public class IngredientEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name")
     private String name;
-
+    @Column(name = "fats")
     private Float fats;
+    @Column(name = "proteins")
     private Float proteins;
+    @Column(name = "carbs")
     private Float carbs;
 
+    @Column(name = "calories")
     private Integer calories;
+    @Column(name = "weight")
     private Float weight;
 
-    @ManyToOne
-    @JoinColumn(name = "dish_id")
-    private DishEntity dish;
+    @ManyToMany(mappedBy = "ingredients")
+    @JsonIgnore
 
-    public Long getId() {
-        return id;
-    }
+    private List<DishEntity> dish;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Float getFats() {
-        return fats;
-    }
-
-    public void setFats(Float fats) {
-        this.fats = fats;
-    }
-
-    public Float getProteins() {
-        return proteins;
-    }
-
-    public void setProteins(Float proteins) {
-        this.proteins = proteins;
-    }
-
-    public Float getCarbs() {
-        return carbs;
-    }
-
-    public void setCarbs(Float carbs) {
-        this.carbs = carbs;
-    }
-
-    public Integer getCalories() {
-        return calories;
-    }
-
-    public void setCalories(Integer calories) {
-        this.calories = calories;
-    }
-
-    public Float getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Float weight) {
-        this.weight = weight;
-    }
-
-    public DishEntity getDish() {
-        return dish;
-    }
-
-    public void setDish(DishEntity dish) {
-        this.dish = dish;
-    }
 }

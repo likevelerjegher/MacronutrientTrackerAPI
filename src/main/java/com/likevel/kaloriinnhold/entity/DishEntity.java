@@ -1,87 +1,39 @@
 package com.likevel.kaloriinnhold.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.List;
 
+@Data
 @Entity
+@Table(name = "dish")
 public class DishEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name")
     private String name;
+    @Column(name = "fats")
     private Float fats;
+    @Column(name = "proteins")
     private Float proteins;
+    @Column(name = "carbs")
     private Float carbs;
 
+    @Column(name = "calories")
     private Integer calories;
+    @Column(name = "servings")
     private Integer servings;
 
-    @OneToMany(mappedBy = "dish", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "dish_id")
+    private List<CommentEntity> comments;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "dish_ingredients",
+    joinColumns = {@JoinColumn(name = "dish_id")},
+    inverseJoinColumns = {@JoinColumn(name = "ingredient_id")})
     private List<IngredientEntity> ingredients;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Float getFats() {
-        return fats;
-    }
-
-    public void setFats(Float fats) {
-        this.fats = fats;
-    }
-
-    public Float getProteins() {
-        return proteins;
-    }
-
-    public void setProteins(Float proteins) {
-        this.proteins = proteins;
-    }
-
-    public Float getCarbs() {
-        return carbs;
-    }
-
-    public void setCarbs(Float carbs) {
-        this.carbs = carbs;
-    }
-
-    public Integer getCalories() {
-        return calories;
-    }
-
-    public void setCalories(Integer calories) {
-        this.calories = calories;
-    }
-
-    public Integer getServings() {
-        return servings;
-    }
-
-    public void setServings(Integer servings) {
-        this.servings = servings;
-    }
-
-    public List<IngredientEntity> getIngredients() {
-        return ingredients;
-    }
-
-    public void setIngredients(List<IngredientEntity> ingredients) {
-        this.ingredients = ingredients;
-    }
 }

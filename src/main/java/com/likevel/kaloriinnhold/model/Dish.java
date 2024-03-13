@@ -2,6 +2,9 @@ package com.likevel.kaloriinnhold.model;
 
 import com.likevel.kaloriinnhold.entity.DishEntity;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class Dish {
     private Long id;
     private String name;
@@ -12,6 +15,7 @@ public class Dish {
 
     private Integer calories;
     private Integer servings;
+    private List<Ingredient> ingredients;
 
     public static Dish toModel(DishEntity entity){
         Dish model = new Dish();
@@ -22,7 +26,16 @@ public class Dish {
         model.setProteins(entity.getProteins());
         model.setCalories(entity.getCalories());
         model.setServings(entity.getServings());
+        model.setIngredients(entity.getIngredients().stream().map(Ingredient::toModel).collect(Collectors.toList()));
         return model;
+    }
+
+    public List<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(List<Ingredient> ingredients) {
+        this.ingredients = ingredients;
     }
 
     public Long getId() {

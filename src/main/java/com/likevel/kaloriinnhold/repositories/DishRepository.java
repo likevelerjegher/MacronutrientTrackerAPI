@@ -11,7 +11,6 @@ public interface DishRepository extends CrudRepository<DishEntity, Long> {
 
 
 //7 - one-to-many
-//opensession_in_view
+//open_session_in_view
 //mysql
 //10 - many-to-many
-//
