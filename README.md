@@ -2,23 +2,23 @@
 
 This repository contains a simple REST API application for tracking calorie counts of meals. Users can retrieve information about comments, dishes, and ingredients, and perform add, update, and delete operations on the data.
 
-## Functionality
+# Functionality
 - Retrieving information about comments, dishes, and ingredients.
 - Storing data in a database.
 - Operations of adding, updating, and deleting data.
 
-## Technologies used
+# Technologies used
 - Spring Boot: Framework for creating REST API.
 - Spring Data JPA: A data access framework for interacting with the database.
 - H2 Database: An embedded database for local development.
 
-## Getting Started
+# Getting Started
 ## Required components
 Make sure you have the following components installed:
 - Java 21
 - Maven
 
-## Installation
+# Installation
 1. Clone the repository:
 
 ```console
@@ -33,7 +33,7 @@ The application will run on `http://localhost:8080`.
 
 # Usage
 ## Endpoints
-## CommentController
+### CommentController
 - `GET /api/comments`: get information about comments
 - `GET /api/dishes/{dishId}/comments`: get comments for a dish
 - `POST /api/dishes/{dishId}/comments`: add a new comment for a dish
@@ -41,7 +41,7 @@ The application will run on `http://localhost:8080`.
 - `DELETE /api/dishes/{dishId}/comments`: delete comments for a dish
 - `DELETE /api/dishes/{dishId}/comments/{commentId}`: delete a specific comment for a dish
   
-## DishController  
+### DishController  
 - `GET /api`: get dish information
 - `GET /api/{id}`: get a dish by ID
 - `POST /api`: create a new dish
@@ -49,7 +49,7 @@ The application will run on `http://localhost:8080`.
 - `DELETE /api/{id}`: delete a dish
 - `DELETE /api`: delete all dishes
   
-## IngredientController    
+### IngredientController    
 - `GET /api/dishes/{dishId}/ingredients`: get ingredients for a dish
 - `GET /api/ingredients/{ingredientId}/dishes`: get dishes by ingredient
 - `GET /api/ingredients`: get ingredient information
