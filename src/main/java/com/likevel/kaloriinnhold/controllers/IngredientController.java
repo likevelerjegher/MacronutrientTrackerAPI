@@ -32,33 +32,32 @@ public class IngredientController {
         return ingredientService.getIngredients();
     }
 //Post
-    @PostMapping
-    public ResponseEntity createIngredient(@RequestBody IngredientEntity ingredient,
-                                           @RequestParam Long dishId){
-        try {
-            return ResponseEntity.ok(ingredientService.createIngredient(ingredient, dishId));
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body("smthing went wrong.");
-        }
-
+    @PostMapping("dishes/{dishId}/ingredients")
+    public void addNewIngredientByDishId(@PathVariable(value = "dishId") Long dishId,
+                                         @RequestBody IngredientEntity ingredient){
+        ingredientService.addNewIngredientByDishId(dishId, ingredient);
     }
+
 //Put
-    @PutMapping
-    public ResponseEntity updateIngredientNutritionalData(@RequestParam Long id){
-        try {
-            return ResponseEntity.ok(ingredientService.updateIngredientNutritionalData(id));
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body("smthing went wrong.");
-
-        }
+    @PutMapping("ingredients/{id]")
+    public void updateIngredient(@PathVariable("id") Long ingredientId,
+                                 @RequestParam(required = false) String name,
+                                 @RequestParam(required = false) Float fats,
+                                 @RequestParam(required = false) Float carbs,
+                                 @RequestParam(required = false) Float proteins,
+                                 @RequestParam(required = false) Integer calories,
+                                 @RequestParam(required = false) Integer weight){
+        ingredientService.updateIngredient(ingredientId, name, fats, carbs, proteins, calories, weight);
     }
+
 //Delete
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteIngredientFromDish(@PathVariable Long id){
-        try {
-            return ResponseEntity.ok(ingredientService.deleteIngredient(id));
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body("smthing went wrong.");
-        }
+    @DeleteMapping("/ingredients/{id}")
+    public void deleteIngredient(@PathVariable(value = "id") Long ingredientId){
+        ingredientService.deleteIngredient(ingredientId);
+    }
+    @DeleteMapping("/dishes/{dishId}/ingredients/{ingredientId}")
+    public void deleteIngredientFromDish(@PathVariable(value = "dishId") Long dishId,
+                                         @PathVariable(value = "ingredientId") Long ingredientId){
+        ingredientService.deleteIngredientFromDish(dishId, ingredientId);
     }
 }

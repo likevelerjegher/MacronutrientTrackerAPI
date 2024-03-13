@@ -18,15 +18,16 @@ public class IngredientEntity {
     private String name;
     @Column(name = "fats")
     private Float fats;
-    @Column(name = "proteins")
-    private Float proteins;
     @Column(name = "carbs")
     private Float carbs;
+    @Column(name = "proteins")
+    private Float proteins;
+
 
     @Column(name = "calories")
     private Integer calories;
     @Column(name = "weight")
-    private Float weight;
+    private Integer weight;
 
     @ManyToMany(mappedBy = "ingredients")
     @JsonIgnore
