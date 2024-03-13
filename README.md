@@ -31,21 +31,25 @@ cd kaloriinnhold-api
 ```
 The application will run on `http://localhost:8080`.
 
-## Usage
+# Usage
 ## Endpoints
-
+## CommentController
 - `GET /api/comments`: get information about comments
 - `GET /api/dishes/{dishId}/comments`: get comments for a dish
 - `POST /api/dishes/{dishId}/comments`: add a new comment for a dish
 - `PUT /api/comments/{id}`: update a comment
 - `DELETE /api/dishes/{dishId}/comments`: delete comments for a dish
 - `DELETE /api/dishes/{dishId}/comments/{commentId}`: delete a specific comment for a dish
+  
+## DishController  
 - `GET /api`: get dish information
 - `GET /api/{id}`: get a dish by ID
 - `POST /api`: create a new dish
 - `PUT /api/{id}`: update a dish
 - `DELETE /api/{id}`: delete a dish
 - `DELETE /api`: delete all dishes
+  
+## IngredientController    
 - `GET /api/dishes/{dishId}/ingredients`: get ingredients for a dish
 - `GET /api/ingredients/{ingredientId}/dishes`: get dishes by ingredient
 - `GET /api/ingredients`: get ingredient information
