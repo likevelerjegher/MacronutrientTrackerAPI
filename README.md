@@ -27,7 +27,7 @@ git clone https://github.com/likevelerjegher/kaloriinnhold
 2. Run the application
 ```console
 cd kaloriinnhold-api
-./gradlew bootRun
+mvn spring-boot:run
 ```
 The application will run on `http://localhost:8080`.
 
