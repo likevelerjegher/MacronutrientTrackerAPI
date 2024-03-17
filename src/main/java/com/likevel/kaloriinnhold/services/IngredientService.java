@@ -19,64 +19,93 @@ import java.util.Optional;
 public class IngredientService {
     private IngredientRepository ingredientRepository;
     private DishRepository dishRepository;
+
     @Autowired
     public IngredientService(IngredientRepository ingredientRepository,
-                             DishRepository dishRepository){
+                             DishRepository dishRepository) {
         this.ingredientRepository = ingredientRepository;
         this.dishRepository = dishRepository;
     }
 
-//Get
-    public List<IngredientEntity> getIngredientsByDishId(Long dishId){
+    //Get
+    public List<IngredientEntity> getIngredientsByDishId(Long dishId) {
         DishEntity dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalStateException(
                         "dish '" + dishId + "' does not exist, can't view its ingredients."));
         return dish.getIngredients();
     }
-    public List<DishEntity> getDishesByIngredientId(Long ingredientId){
+
+    public List<DishEntity> getDishesByIngredientId(Long ingredientId) {
         IngredientEntity ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalStateException(
                         "ingredient with id " + ingredientId + " does not exist, can't view its dishes."));
         return ingredient.getDishes();
     }
-    public List<IngredientEntity> getIngredients(){
+
+    public List<IngredientEntity> getIngredients() {
         return ingredientRepository.findAll();
     }
-//Post
-    public void addNewIngredientByDishId(Long dishId, IngredientEntity ingredientRequest){
+
+    //Post
+    public void addNewIngredientByDishId(Long dishId, IngredientEntity ingredientRequest) {
         DishEntity dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalIdentifierException(
                         "dish id: " + dishId + " does not exist, can't add ingredient to it."));
-        IngredientEntity ingredient = ingredientRepository. findIngredientsByName(ingredientRequest.getName());
-        if(dish.getIngredients().stream().noneMatch(ingredientFunc -> ingredientFunc.getName().equals(ingredientRequest.getName()))){
-            if (ingredient != null){
+        IngredientEntity ingredient = ingredientRepository.findIngredientByName(ingredientRequest.getName());
+        if (dish.getIngredients().stream().noneMatch(ingredientFunc -> ingredientFunc.getName().equals(ingredientRequest.getName()))) {
+            if (ingredient != null) {
                 ingredientRepository.save(ingredient);
                 dish.getIngredients().add(ingredient);
+                if (ingredient.getFats() != null && ingredient.getFats() > 0) {
+                    dish.setFats(dish.getFats() + ingredient.getFats());
+                }
+                if (ingredient.getCarbs() != null && ingredient.getCarbs() > 0) {
+                    dish.setCarbs(dish.getCarbs() + ingredient.getCarbs());
+                }
+                if (ingredient.getProteins() != null && ingredient.getProteins() > 0) {
+                    dish.setProteins(dish.getProteins() + ingredient.getProteins());
+                }
+                if (ingredient.getCalories() != null && ingredient.getCalories() > 0) {
+                    dish.setCalories(dish.getCalories() + ingredient.getCalories());
+                }
                 dishRepository.save(dish);
-            }else{
+            } else {
                 ingredientRepository.save(ingredientRequest);
                 dish.getIngredients().add(ingredientRequest);
+                if (ingredientRequest.getFats() != null && ingredientRequest.getFats() > 0) {
+                    dish.setFats(dish.getFats() + ingredientRequest.getFats());
+                }
+                if (ingredientRequest.getCarbs() != null && ingredientRequest.getCarbs() > 0) {
+                    dish.setCarbs(dish.getCarbs() + ingredientRequest.getCarbs());
+                }
+                if (ingredientRequest.getProteins() != null && ingredientRequest.getProteins() > 0) {
+                    dish.setProteins(dish.getProteins() + ingredientRequest.getProteins());
+                }
+                if (ingredientRequest.getCalories() != null && ingredientRequest.getCalories() > 0) {
+                    dish.setCalories(dish.getCalories() + ingredientRequest.getCalories());
+                }
                 dishRepository.save(dish);
             }
-        }else{
+        } else {
             throw new IllegalStateException("ingredient with name " + ingredientRequest.getName()
                     + " already exists in the dish " + dish.getName() + ".");
         }
     }
-//Put
+
+    //Put
     @Transactional
     public void updateIngredient(Long ingredientId, String ingredientName,
                                  Float ingredientFats,
                                  Float ingredientCarbs,
                                  Float ingredientProteins,
                                  Integer ingredientCalories,
-                                 Integer ingredientWeight){
+                                 Integer ingredientWeight) {
         IngredientEntity ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalStateException(
                         "ingredient id: " + ingredientId + " does not exist, therefore can't update it."));
-        if(ingredientName != null && !ingredientName.isEmpty() && !Objects.equals(ingredient.getName(),ingredientName)){
-            Optional<IngredientEntity> ingredientOptional = Optional.ofNullable(ingredientRepository.findIngredientsByName(ingredientName));
-            if(ingredientOptional.isPresent()){
+        if (ingredientName != null && !ingredientName.isEmpty() && !Objects.equals(ingredient.getName(), ingredientName)) {
+            Optional<IngredientEntity> ingredientOptional = Optional.ofNullable(ingredientRepository.findIngredientByName(ingredientName));
+            if (ingredientOptional.isPresent()) {
                 throw new IllegalStateException("ingredient with this name already exists.");
             }
             ingredient.setName(ingredientName);
@@ -87,19 +116,21 @@ public class IngredientService {
         if (ingredientCalories != null && ingredientCalories > 0) ingredient.setCalories(ingredientCalories);
         if (ingredientWeight != null && ingredientWeight > 0) ingredient.setWeight(ingredientWeight);
     }
-//Delete
-    public void deleteIngredient(Long ingredientId){
+
+    //Delete
+    public void deleteIngredient(Long ingredientId) {
         IngredientEntity ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalStateException(
                         "ingredient with id " + ingredientId + " does not exist, therefore can't delete it."));
         List<DishEntity> dishes = ingredient.getDishes();
-        for(DishEntity dish: dishes){
+        for (DishEntity dish : dishes) {
             dish.getIngredients().remove(ingredient);
             dishRepository.save(dish);
         }
         ingredientRepository.delete(ingredient);
     }
-    public void deleteIngredientFromDish(Long dishId, Long ingredientId){
+
+    public void deleteIngredientFromDish(Long dishId, Long ingredientId) {
         DishEntity dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalStateException(
                         "dish " + ingredientId + " does not exist, therefore cannot delete it."));

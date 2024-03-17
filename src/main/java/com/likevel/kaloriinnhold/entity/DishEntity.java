@@ -16,24 +16,23 @@ public class DishEntity {
     @Column(name = "name")
     private String name;
     @Column(name = "fats")
-    private Float fats;
+    private Float fats = 0.0f;
     @Column(name = "carbs")
-    private Float carbs;
+    private Float carbs = 0.0f;
     @Column(name = "proteins")
-    private Float proteins;
+    private Float proteins = 0.0f;
 
     @Column(name = "calories")
-    private Integer calories;
+    private Integer calories = 0;
     @Column(name = "servings")
-    private Float servings;
+    private Float servings = 0.0f;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "dish_id")
+    @OneToMany(mappedBy = "dish", orphanRemoval=true, cascade = CascadeType.ALL)
     private List<CommentEntity> comments;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "dish_ingredients",
-    joinColumns = {@JoinColumn(name = "dish_id")},
-    inverseJoinColumns = {@JoinColumn(name = "ingredient_id")})
+            joinColumns = {@JoinColumn(name = "dish_id")},
+            inverseJoinColumns = {@JoinColumn(name = "ingredient_id")})
     private List<IngredientEntity> ingredients;
 }

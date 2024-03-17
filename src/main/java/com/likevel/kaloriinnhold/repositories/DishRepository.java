@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface DishRepository extends CrudRepository<DishEntity, Long> {
     Optional<DishEntity> findDishByName(String name);
+
     List<DishEntity> findAll();
 }
 

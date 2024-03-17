@@ -13,29 +13,33 @@ import java.util.List;
 @RequestMapping("/api")
 @AllArgsConstructor
 public class DishController {
-//Get
+    //Get
     private final DishService dishService;
 
     @GetMapping("/calculate")
-    public ResponseEntity<Object> getDishesWithParams(@RequestParam(name="name") String name,
-                                                       @RequestParam(name="weight") Long weight){
+    public ResponseEntity<Object> getDishesWithParams(@RequestParam(name = "name") String name,
+                                                      @RequestParam(name = "weight") Long weight) {
         return new ResponseEntity<>(dishService.getNutritionalData(name, weight), HttpStatus.OK);
 
     }
-    @GetMapping
-    public List<DishEntity> getDishes(){
-        return dishService.getDishes();
-    }
+
     @GetMapping("/{id}")
-    public DishEntity getDishById(@PathVariable("id") Long dishId){
+    public DishEntity getDishById(@PathVariable("id") Long dishId) {
         return dishService.getDishById(dishId);
     }
-//Post
+
+    @GetMapping("/dishes")
+    public List<DishEntity> getDishes() {
+        return dishService.getDishes();
+    }
+
+    //Post
     @PostMapping
-    public void createNewDish(@RequestBody DishEntity dish){
+    public void createNewDish(@RequestBody DishEntity dish) {
         dishService.createNewDish(dish);
     }
-//Put
+
+    //Put
     @PutMapping("/{id}")
     public void updateDish(@PathVariable("id") Long dishId,
                            @RequestParam(required = false) String name,
@@ -43,17 +47,19 @@ public class DishController {
                            @RequestParam(required = false) Float carbs,
                            @RequestParam(required = false) Float proteins,
                            @RequestParam(required = false) Integer calories,
-                           @RequestParam(required = false) Float servings){
+                           @RequestParam(required = false) Float servings) {
         dishService.updateDish(dishId, name, fats, carbs, proteins, calories, servings);
     }
-//Delete
+
+    //Delete
     @DeleteMapping("/{id}")
-    public void deleteDish(@PathVariable("id") Long dishId){
+    public void deleteDish(@PathVariable("id") Long dishId) {
         dishService.deleteDish(dishId);
 
     }
-    @DeleteMapping
-    public void deleteDishes(){
+
+    @DeleteMapping("/dishes")
+    public void deleteDishes() {
         dishService.deleteDishes();
     }
 

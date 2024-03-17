@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "comment")
-public class CommentEntity{
+public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,4 +15,8 @@ public class CommentEntity{
     private String username;
     @Column(name = "commentText")
     private String commentText;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dish_id")
+    private DishEntity dish;
 }
