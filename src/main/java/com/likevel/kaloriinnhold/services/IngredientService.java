@@ -74,7 +74,7 @@ public class IngredientService {
                         "dish id: " + dishId + " does not exist, can't add ingredient to it."));
         IngredientEntity ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalStateException(
-                        "ingredient id: " + ingredientId + " does not exist, therefore cannot delete it"));
+                        "ingredient with id: " + ingredientId + " does not exist, therefore cannot delete it"));
         dish.getIngredients().add(ingredient);
         addNutritionToDish(dish, ingredient);
     }
@@ -127,7 +127,7 @@ public class IngredientService {
                         "dish " + ingredientId + " does not exist, therefore cannot delete it."));
         IngredientEntity ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalStateException(
-                        "ingredient id: " + ingredientId + " does not exist, therefore cannot delete it"));
+                        "ingredient " + ingredientId + " does not exist, therefore cannot delete it"));
 
         subtractNutritionInDish(dish, ingredient);
         dish.getIngredients().remove(ingredient);
