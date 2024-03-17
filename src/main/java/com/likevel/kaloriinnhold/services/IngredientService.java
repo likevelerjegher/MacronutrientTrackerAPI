@@ -64,7 +64,7 @@ public class IngredientService {
             }
         } else {
             throw new IllegalStateException("ingredient with name " + ingredientRequest.getName()
-                    + " already exists in the dish " + dish.getName() + ".");
+                    + " already exists in the dish " + dish.getDishName() + ".");
         }
     }
 
@@ -135,32 +135,32 @@ public class IngredientService {
 
     public void addNutritionToDish(DishEntity dish, IngredientEntity ingredient) {
         if (ingredient.getFats() != null && ingredient.getFats() >= 0) {
-            dish.setFats(dish.getFats() + ingredient.getFats());
+            dish.setDishFats(dish.getDishFats() + ingredient.getFats());
         }
         if (ingredient.getCarbs() != null && ingredient.getCarbs() >= 0) {
-            dish.setCarbs(dish.getCarbs() + ingredient.getCarbs());
+            dish.setDishCarbs(dish.getDishCarbs() + ingredient.getCarbs());
         }
         if (ingredient.getProteins() != null && ingredient.getProteins() >= 0) {
-            dish.setProteins(dish.getProteins() + ingredient.getProteins());
+            dish.setDishProteins(dish.getDishProteins() + ingredient.getProteins());
         }
         if (ingredient.getCalories() != null && ingredient.getCalories() >= 0) {
-            dish.setCalories(dish.getCalories() + ingredient.getCalories());
+            dish.setDishCalories(dish.getDishCalories() + ingredient.getCalories());
         }
         dishRepository.save(dish);
     }
 
     public void subtractNutritionInDish(DishEntity dish, IngredientEntity ingredient) {
         if (ingredient.getFats() != null && ingredient.getFats() >= 0) {
-            dish.setFats(dish.getFats() - ingredient.getFats());
+            dish.setDishFats(dish.getDishFats() - ingredient.getFats());
         }
         if (ingredient.getCarbs() != null && ingredient.getCarbs() >= 0) {
-            dish.setCarbs(dish.getCarbs() - ingredient.getCarbs());
+            dish.setDishCarbs(dish.getDishCarbs() - ingredient.getCarbs());
         }
         if (ingredient.getProteins() != null && ingredient.getProteins() >= 0) {
-            dish.setProteins(dish.getProteins() - ingredient.getProteins());
+            dish.setDishProteins(dish.getDishProteins() - ingredient.getProteins());
         }
         if (ingredient.getCalories() != null && ingredient.getCalories() >= 0) {
-            dish.setCalories(dish.getCalories() - ingredient.getCalories());
+            dish.setDishCalories(dish.getDishCalories() - ingredient.getCalories());
         }
         dishRepository.save(dish);
     }

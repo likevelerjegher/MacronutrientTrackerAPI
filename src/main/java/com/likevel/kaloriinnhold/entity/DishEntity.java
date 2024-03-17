@@ -15,16 +15,16 @@ public class DishEntity {
     private Long id;
 
     @Column(name = "name")
-    private String name;
+    private String dishName;
     @Column(name = "fats")
-    private Float fats = 0.0f;
+    private Float dishFats = 0.0f;
     @Column(name = "carbs")
-    private Float carbs = 0.0f;
+    private Float dishCarbs = 0.0f;
     @Column(name = "proteins")
-    private Float proteins = 0.0f;
+    private Float dishProteins = 0.0f;
 
     @Column(name = "calories")
-    private Integer calories = 0;
+    private Integer dishCalories = 0;
     @Column(name = "servings")
     private Float servings = 0.0f;
 

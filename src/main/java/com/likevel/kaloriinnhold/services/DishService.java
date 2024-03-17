@@ -54,7 +54,7 @@ public class DishService {
     //Post
     public void createNewDish(DishEntity dish) {
         Optional<DishEntity> dishOptional = dishRepository
-                .findDishByName(dish.getName());
+                .findDishByDishName(dish.getDishName());
         if (dishOptional.isPresent()) {
             throw new IllegalStateException("dish with this name already exists.");
         }
@@ -68,12 +68,12 @@ public class DishService {
         DishEntity dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalStateException(
                         "dish with id " + dishId + "is not updated (does not exist)."));
-        if (dishName != null && !dishName.isEmpty() && !Objects.equals(dish.getName(), dishName)) {
-            Optional<DishEntity> dishOptional = dishRepository.findDishByName(dishName);
+        if (dishName != null && !dishName.isEmpty() && !Objects.equals(dish.getDishName(), dishName)) {
+            Optional<DishEntity> dishOptional = dishRepository.findDishByDishName(dishName);
             if (dishOptional.isPresent()) {
                 throw new IllegalStateException("dish with this name already exists.");
             }
-            dish.setName(dishName);
+            dish.setDishName(dishName);
         }
         if (servings != null && servings > 0) {
             dish.setServings(servings);

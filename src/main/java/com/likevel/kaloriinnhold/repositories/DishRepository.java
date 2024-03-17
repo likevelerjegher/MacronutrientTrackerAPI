@@ -9,13 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface DishRepository extends CrudRepository<DishEntity, Long> {
-    Optional<DishEntity> findDishByName(String name);
+    Optional<DishEntity> findDishByDishName(String name);
 
     List<DishEntity> findAll();
 }
-
-
-//7 - one-to-many
-//open_session_in_view
-//mysql
-//10 - many-to-many
