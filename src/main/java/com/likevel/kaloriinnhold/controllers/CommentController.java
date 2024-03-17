@@ -49,11 +49,6 @@ public class CommentController {
         commentService.deleteCommentsByDishId(dishId);
     }
 
-    @DeleteMapping("/dishes/{dishId}/comments/{commentId}")
-    public void deleteCommentFromDishId(@PathVariable(value = "dishId") Long dishId,
-                                        @PathVariable(value = "commentId") Long commentId) {
-        commentService.deleteCommentFromDishId(dishId, commentId);
-    }
     @DeleteMapping("/comments/{id}")
     public void deleteDish(@PathVariable("id") Long dishId) {
         commentService.deleteComment(dishId);

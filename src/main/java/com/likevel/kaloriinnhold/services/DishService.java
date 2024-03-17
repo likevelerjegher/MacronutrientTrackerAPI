@@ -64,10 +64,7 @@ public class DishService {
     //Put
     @Transactional
     public void updateDish(Long dishId, String dishName,
-                           Float dishFats,
-                           Float dishCarbs,
-                           Float dishProteins,
-                           Integer dishCalories, Float servings) {
+                           Float servings) {
         DishEntity dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalStateException(
                         "dish with id " + dishId + "is not updated (does not exist)."));
@@ -77,19 +74,6 @@ public class DishService {
                 throw new IllegalStateException("dish with this name already exists.");
             }
             dish.setName(dishName);
-        }
-
-        if (dishFats != null && dishFats > 0) {
-            dish.setFats(dishFats);
-        }
-        if (dishCarbs != null && dishCarbs > 0) {
-            dish.setCarbs(dishCarbs);
-        }
-        if (dishProteins != null && dishProteins > 0) {
-            dish.setProteins(dishProteins);
-        }
-        if (dishCalories != null && dishCalories > 0) {
-            dish.setCalories(dishCalories);
         }
         if (servings != null && servings > 0) {
             dish.setServings(servings);

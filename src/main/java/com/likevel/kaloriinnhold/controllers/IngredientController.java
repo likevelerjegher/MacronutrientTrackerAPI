@@ -40,6 +40,11 @@ public class IngredientController {
                                          @RequestBody IngredientEntity ingredient) {
         ingredientService.addNewIngredientByDishId(dishId, ingredient);
     }
+    @PostMapping("/dishes/{dishId}/ingredients/{ingredientId}")
+    public void addExistingIngredientByDishId(@PathVariable(value = "dishId") Long dishId,
+                                                 @PathVariable(value = "ingredientId") Long ingredientId) {
+        ingredientService.addExistingIngredientByDishId(dishId, ingredientId);
+    }
 
     //Put
     @PutMapping("ingredients/{id}")

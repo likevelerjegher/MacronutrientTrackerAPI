@@ -43,19 +43,14 @@ public class DishController {
     @PutMapping("/{id}")
     public void updateDish(@PathVariable("id") Long dishId,
                            @RequestParam(required = false) String name,
-                           @RequestParam(required = false) Float fats,
-                           @RequestParam(required = false) Float carbs,
-                           @RequestParam(required = false) Float proteins,
-                           @RequestParam(required = false) Integer calories,
                            @RequestParam(required = false) Float servings) {
-        dishService.updateDish(dishId, name, fats, carbs, proteins, calories, servings);
+        dishService.updateDish(dishId, name, servings);
     }
 
     //Delete
     @DeleteMapping("/{id}")
     public void deleteDish(@PathVariable("id") Long dishId) {
         dishService.deleteDish(dishId);
-
     }
 
     @DeleteMapping("/dishes")

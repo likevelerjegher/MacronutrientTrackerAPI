@@ -36,12 +36,15 @@ public class CommentService {
         DishEntity dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalStateException(
                         "dish '" + dishId + "' does not exist, therefore cannot add new comment."));
-        if (dish.getComments().stream().noneMatch(comment -> comment.getCommentText().equals(commentRequest.getCommentText()))) {
+        if (dish.getComments().stream().noneMatch(comment -> comment.getCommentText().equals(commentRequest.getCommentText()))
+                || dish.getComments().stream().noneMatch(comment -> comment.getUsername().equals(commentRequest.getUsername()))) {
+            commentRequest.setDish(dish);
             dish.getComments().add(commentRequest);
             commentRepository.save(commentRequest);
             dishRepository.save(dish);
         } else {
-            throw new IllegalStateException("this comments with context \"" + commentRequest.getCommentText() + "\" already exists on the dish page.");
+            throw new IllegalStateException("this comment with context \"" + commentRequest.getCommentText()
+                    + "\" and username " + commentRequest.getUsername() + "already exists on the dish page.");
         }
     }
 
@@ -74,24 +77,13 @@ public class CommentService {
         dishRepository.save(dish);
     }
 
-    public void deleteCommentFromDishId(Long dishId, Long commentId) {
-        DishEntity dish = dishRepository.findById(dishId)
-                .orElseThrow(() -> new IllegalStateException(
-                        "dish " + dishId + " does not exist, therefore comment cannot be deleted"));
-        CommentEntity comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalStateException(
-                        "comment id: " + commentId + " does not exist, therefore cannot be deleted"));
-        dish.getComments().remove(comment);
-        dishRepository.save(dish);
-    }
-
     public void deleteComment(Long commentId) {
-       CommentEntity comment = commentRepository.findById(commentId)
+        CommentEntity comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalStateException(
                         "comment with id " + commentId + " does not exist, therefore cannot be deleted."));
         DishEntity dish = comment.getDish();
 
-        dish.getIngredients().remove(comment);
+        dish.getComments().remove(comment);
         dishRepository.save(dish);
 
         commentRepository.delete(comment);

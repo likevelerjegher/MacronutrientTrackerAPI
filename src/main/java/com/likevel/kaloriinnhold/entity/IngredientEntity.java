@@ -1,6 +1,7 @@
 package com.likevel.kaloriinnhold.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -8,7 +9,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "ingredient")
+@Table(name = "ingredients")
 public class IngredientEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,14 +23,13 @@ public class IngredientEntity {
     private Float carbs = 0.0f;
     @Column(name = "proteins")
     private Float proteins = 0.0f;
-
-
     @Column(name = "calories")
     private Integer calories = 0;
     @Column(name = "weight")
     private Integer weight;
 
-    @ManyToMany(mappedBy = "ingredients")
-    @JsonIgnore
+    @JsonIgnoreProperties("ingredients")
+    @ManyToMany(mappedBy = "ingredients",
+            cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE})
     private List<DishEntity> dishes;
 }
