@@ -33,23 +33,25 @@ public class IngredientService {
 
     //Get
     public List<Ingredient> getIngredientsByDishId(Long dishId) {
-        if (CacheManager.containsKey(INGREDIENTS_BY_ID_REQUEST + dishId + "/ingredients")) {
-            return (List<Ingredient>) CacheManager.get(INGREDIENTS_BY_ID_REQUEST + dishId + "/ingredients");
+        String request = INGREDIENTS_BY_ID_REQUEST + dishId + "/ingredients";
+        if (CacheManager.containsKey(request)) {
+            return (List<Ingredient>) CacheManager.get(request);
         } else {
             Dish dish = dishRepository.findById(dishId).orElse(null);
             List<Ingredient> ingredients = dish.getIngredients();
-            CacheManager.put(INGREDIENTS_BY_ID_REQUEST + dishId + "/ingredients", ingredients);
+            CacheManager.put(request, ingredients);
             return ingredients;
         }
     }
 
     public List<Dish> getDishesByIngredientId(Long ingredientId) {
-        if (CacheManager.containsKey(DISHES_BY_INGREDIENT_ID_REQUEST + ingredientId + "/dishes")) {
-            return (List<Dish>) CacheManager.get(DISHES_BY_INGREDIENT_ID_REQUEST + ingredientId + "/dishes");
+        String request = DISHES_BY_INGREDIENT_ID_REQUEST + ingredientId + "/dishes";
+        if (CacheManager.containsKey(request)) {
+            return (List<Dish>) CacheManager.get(request);
         } else {
             Ingredient ingredient = ingredientRepository.findById(ingredientId).orElse(null);
             List<Dish> dishes = ingredient.getDishes();
-            CacheManager.put(DISHES_BY_INGREDIENT_ID_REQUEST + ingredientId + "/dishes", dishes);
+            CacheManager.put(request, dishes);
             return dishes;
         }
     }

@@ -34,12 +34,13 @@ public class CommentService {
     }
 
     public List<Comment> getCommentsByDishId(Long dishId) {
-        if (CacheManager.containsKey(COMMENTS_BY_ID_REQUEST + dishId + "/comments")) {
-            return (List<Comment>) CacheManager.get(COMMENTS_BY_ID_REQUEST + dishId + "/comments");
+        String request = COMMENTS_BY_ID_REQUEST + dishId + "/comments";
+        if (CacheManager.containsKey(request)) {
+            return (List<Comment>) CacheManager.get(request);
         } else {
             Dish dish = dishRepository.findById(dishId).orElse(null);
             List<Comment> comments = dish.getComments();
-            CacheManager.put(COMMENTS_BY_ID_REQUEST + dishId + "/comments", comments);
+            CacheManager.put(request, comments);
             return comments;
         }
     }
