@@ -1,6 +1,6 @@
 package com.likevel.kaloriinnhold.controllers;
 
-import com.likevel.kaloriinnhold.entity.DishEntity;
+import com.likevel.kaloriinnhold.model.Dish;
 import com.likevel.kaloriinnhold.services.DishService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,18 +24,23 @@ public class DishController {
     }
 
     @GetMapping("/{id}")
-    public DishEntity getDishById(@PathVariable("id") Long dishId) {
+    public Dish getDishById(@PathVariable("id") Long dishId) {
         return dishService.getDishById(dishId);
     }
 
     @GetMapping("/dishes")
-    public List<DishEntity> getDishes() {
+    public List<Dish> getDishes() {
         return dishService.getDishes();
+    }
+
+    @GetMapping("/limit")
+    public List<Dish> getDishesWithLessOrSameCalories(@RequestParam("calories") Integer calorieLimit) {
+        return dishService.getDishesWithLessOrSameCalories(calorieLimit);
     }
 
     //Post
     @PostMapping
-    public void createNewDish(@RequestBody DishEntity dish) {
+    public void createNewDish(@RequestBody Dish dish) {
         dishService.createNewDish(dish);
     }
 

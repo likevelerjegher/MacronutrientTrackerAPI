@@ -1,6 +1,6 @@
 package com.likevel.kaloriinnhold.controllers;
 
-import com.likevel.kaloriinnhold.entity.CommentEntity;
+import com.likevel.kaloriinnhold.model.Comment;
 import com.likevel.kaloriinnhold.services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,19 +19,19 @@ public class CommentController {
 
     //Get
     @GetMapping("/comments")
-    public List<CommentEntity> getComments() {
+    public List<Comment> getComments() {
         return commentService.getComments();
     }
 
     @GetMapping("/dishes/{dishId}/comments")
-    public List<CommentEntity> getCommentsByDishId(@PathVariable(value = "dishId") Long dishId) {
+    public List<Comment> getCommentsByDishId(@PathVariable(value = "dishId") Long dishId) {
         return commentService.getCommentsByDishId(dishId);
     }
 
     //Post
     @PostMapping("/dishes/{dishId}/comment")
     public void addNewCommentByDishId(@PathVariable(value = "dishId") Long dishId,
-                                      @RequestBody CommentEntity comment) {
+                                      @RequestBody Comment comment) {
         commentService.addNewCommentByDishId(dishId, comment);
     }
 
@@ -50,7 +50,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/comments/{id}")
-    public void deleteDish(@PathVariable("id") Long dishId) {
+    public void deleteComment(@PathVariable("id") Long dishId) {
         commentService.deleteComment(dishId);
 
     }

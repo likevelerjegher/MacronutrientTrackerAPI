@@ -1,6 +1,7 @@
 package com.likevel.kaloriinnhold.services;
 
-import com.likevel.kaloriinnhold.entity.DishEntity;
+import com.likevel.kaloriinnhold.cache.CacheManager;
+import com.likevel.kaloriinnhold.model.Dish;
 import com.likevel.kaloriinnhold.repositories.DishRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class DishService {
-
+    private static final String ALL_DISHES_REQUEST = "http://localhost:8080/api/dishes";
+    private static final String DISH_BY_ID_REQUEST = "http://localhost:8080/api/";
     private final DishRepository dishRepository;
 
     @Autowired
@@ -41,35 +41,52 @@ public class DishService {
         }
     }
 
-    public List<DishEntity> getDishes() {
-        return dishRepository.findAll();
+    public List<Dish> getDishes() {
+        if(CacheManager.containsKey(ALL_DISHES_REQUEST)){
+            return (List<Dish>) CacheManager.get(ALL_DISHES_REQUEST);
+        }else{
+            List<Dish> dishes = dishRepository.findAll();
+            CacheManager.put(ALL_DISHES_REQUEST, dishes);
+            return dishes;
+        }
     }
 
-    public DishEntity getDishById(Long dishId) {
-        return dishRepository.findById(dishId)
-                .orElseThrow(() -> new IllegalStateException(
-                        "dish '" + dishId + "' is not found (does not exist)."));
+    public Dish getDishById(Long dishId) {
+        if (CacheManager.containsKey(DISH_BY_ID_REQUEST + dishId.toString())){
+            return ((List<Dish>) CacheManager.get(DISH_BY_ID_REQUEST+dishId)).get(0);
+        }else {
+            Dish dish = dishRepository.findById(dishId).orElse(null);
+            List<Dish> dishes = new ArrayList<>();
+            dishes.add(dish);
+            CacheManager.put(DISH_BY_ID_REQUEST + dishId, dishes);
+            return dish;
+        }
+    }
+    public List<Dish> getDishesWithLessOrSameCalories(Integer caloriesLimit){
+        return dishRepository.getDishesWithLessOrSameCalories(caloriesLimit);
     }
 
     //Post
-    public void createNewDish(DishEntity dish) {
-        Optional<DishEntity> dishOptional = dishRepository
+    public void createNewDish(Dish dish) {
+        Optional<Dish> dishOptional = dishRepository
                 .findDishByDishName(dish.getDishName());
         if (dishOptional.isPresent()) {
             throw new IllegalStateException("dish with this name already exists.");
         }
         dishRepository.save(dish);
+        CacheManager.clear();
+
     }
 
     //Put
     @Transactional
     public void updateDish(Long dishId, String dishName,
                            Float servings) {
-        DishEntity dish = dishRepository.findById(dishId)
+        Dish dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalStateException(
                         "dish with id " + dishId + "is not updated (does not exist)."));
         if (dishName != null && !dishName.isEmpty() && !Objects.equals(dish.getDishName(), dishName)) {
-            Optional<DishEntity> dishOptional = dishRepository.findDishByDishName(dishName);
+            Optional<Dish> dishOptional = dishRepository.findDishByDishName(dishName);
             if (dishOptional.isPresent()) {
                 throw new IllegalStateException("dish with this name already exists.");
             }
@@ -78,6 +95,7 @@ public class DishService {
         if (servings != null && servings > 0) {
             dish.setServings(servings);
         }
+        CacheManager.clear();
     }
 
     //Delete
@@ -88,10 +106,13 @@ public class DishService {
                     "dish id: " + dishId + "is not deleted (does not exist)");
         }
         dishRepository.deleteById(dishId);
+        CacheManager.clear();
+
     }
 
     public void deleteDishes() {
         dishRepository.deleteAll();
+        CacheManager.clear();
     }
 
 }

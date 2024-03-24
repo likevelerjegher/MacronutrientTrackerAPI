@@ -1,7 +1,7 @@
 package com.likevel.kaloriinnhold.controllers;
 
-import com.likevel.kaloriinnhold.entity.DishEntity;
-import com.likevel.kaloriinnhold.entity.IngredientEntity;
+import com.likevel.kaloriinnhold.model.Dish;
+import com.likevel.kaloriinnhold.model.Ingredient;
 import com.likevel.kaloriinnhold.services.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,24 +20,24 @@ public class IngredientController {
 
     //Get
     @GetMapping("dishes/{dishId}/ingredients")
-    public List<IngredientEntity> getIngredientsByDishId(@PathVariable(value = "dishId") Long dishId) {
+    public List<Ingredient> getIngredientsByDishId(@PathVariable(value = "dishId") Long dishId) {
         return ingredientService.getIngredientsByDishId(dishId);
     }
 
     @GetMapping("ingredients/{ingredientId}/dishes")
-    public List<DishEntity> getDishesByIngredientId(@PathVariable(value = "ingredientId") Long ingredientId) {
+    public List<Dish> getDishesByIngredientId(@PathVariable(value = "ingredientId") Long ingredientId) {
         return ingredientService.getDishesByIngredientId(ingredientId);
     }
 
     @GetMapping("/ingredients")
-    public List<IngredientEntity> getIngredients() {
+    public List<Ingredient> getIngredients() {
         return ingredientService.getIngredients();
     }
 
     //Post
     @PostMapping("dishes/{dishId}/ingredient")
     public void addNewIngredientByDishId(@PathVariable(value = "dishId") Long dishId,
-                                         @RequestBody IngredientEntity ingredient) {
+                                         @RequestBody Ingredient ingredient) {
         ingredientService.addNewIngredientByDishId(dishId, ingredient);
     }
 

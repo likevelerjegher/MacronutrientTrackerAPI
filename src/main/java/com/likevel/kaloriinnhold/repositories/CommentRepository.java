@@ -1,6 +1,6 @@
 package com.likevel.kaloriinnhold.repositories;
 
-import com.likevel.kaloriinnhold.entity.CommentEntity;
+import com.likevel.kaloriinnhold.model.Comment;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CommentRepository extends CrudRepository<CommentEntity, Long> {
-    List<CommentEntity> findAll();
+public interface CommentRepository extends CrudRepository<Comment, Long> {
+    List<Comment> findAll();
 
-    Optional<CommentEntity> findCommentByCommentText(String commentText);
+    Optional<Comment> findCommentByCommentText(String commentText);
 }
