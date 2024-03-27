@@ -20,7 +20,7 @@ import java.util.Optional;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final DishRepository dishRepository;
-    static final Logger LOGGER = LogManager.getLogger(DishService.class);
+    static final Logger LOGGER = LogManager.getLogger(CommentService.class);
 
     //Get
     public List<Comment> getComments() {

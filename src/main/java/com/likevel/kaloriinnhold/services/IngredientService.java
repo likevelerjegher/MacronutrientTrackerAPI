@@ -1,6 +1,5 @@
 package com.likevel.kaloriinnhold.services;
 
-import com.likevel.kaloriinnhold.cache.CacheManager;
 import com.likevel.kaloriinnhold.model.Dish;
 import com.likevel.kaloriinnhold.model.Ingredient;
 import com.likevel.kaloriinnhold.repositories.DishRepository;
@@ -10,7 +9,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +21,7 @@ import java.util.Optional;
 public class IngredientService {
     private IngredientRepository ingredientRepository;
     private DishRepository dishRepository;
-    static final Logger LOGGER = LogManager.getLogger(DishService.class);
+    static final Logger LOGGER = LogManager.getLogger(IngredientService.class);
 
     @Autowired
     public IngredientService(IngredientRepository ingredientRepository,
