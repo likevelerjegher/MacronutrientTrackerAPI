@@ -5,8 +5,11 @@ import com.likevel.kaloriinnhold.model.Dish;
 import com.likevel.kaloriinnhold.model.Ingredient;
 import com.likevel.kaloriinnhold.repositories.DishRepository;
 import com.likevel.kaloriinnhold.repositories.IngredientRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,9 +23,7 @@ import java.util.Optional;
 public class IngredientService {
     private IngredientRepository ingredientRepository;
     private DishRepository dishRepository;
-    private static final String ALL_INGREDIENTS_REQUEST = "http://localhost:8080/api/ingredients";
-    private static final String INGREDIENTS_BY_ID_REQUEST = "http://localhost:8080/api/dishes/{dishId}/ingredients";
-    private static final String DISHES_BY_INGREDIENT_ID_REQUEST = "ingredients/";
+    static final Logger LOGGER = LogManager.getLogger(DishService.class);
 
     @Autowired
     public IngredientService(IngredientRepository ingredientRepository,
@@ -33,43 +34,30 @@ public class IngredientService {
 
     //Get
     public List<Ingredient> getIngredientsByDishId(Long dishId) {
-        String request = INGREDIENTS_BY_ID_REQUEST + dishId + "/ingredients";
-        if (CacheManager.containsKey(request)) {
-            return (List<Ingredient>) CacheManager.get(request);
-        } else {
-            Dish dish = dishRepository.findById(dishId).orElse(null);
-            List<Ingredient> ingredients = dish.getIngredients();
-            CacheManager.put(request, ingredients);
-            return ingredients;
-        }
+        Dish dish = dishRepository.findById(dishId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "dish '" + dishId + "' does not exist, can't view its ingredients."));
+        LOGGER.info("retrieving ingredients from DB by dish id.");
+        return dish.getIngredients();
     }
 
     public List<Dish> getDishesByIngredientId(Long ingredientId) {
-        String request = DISHES_BY_INGREDIENT_ID_REQUEST + ingredientId + "/dishes";
-        if (CacheManager.containsKey(request)) {
-            return (List<Dish>) CacheManager.get(request);
-        } else {
-            Ingredient ingredient = ingredientRepository.findById(ingredientId).orElse(null);
-            List<Dish> dishes = ingredient.getDishes();
-            CacheManager.put(request, dishes);
-            return dishes;
-        }
+        Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "ingredient with id " + ingredientId + " does not exist, can't view its dishes."));
+        LOGGER.info("retrieving dishes from DB by ingredient id.");
+        return ingredient.getDishes();
     }
 
     public List<Ingredient> getIngredients() {
-        if (CacheManager.containsKey(ALL_INGREDIENTS_REQUEST)) {
-            return (List<Ingredient>) CacheManager.get(ALL_INGREDIENTS_REQUEST);
-        } else {
-            List<Ingredient> ingredients = ingredientRepository.findAll();
-            CacheManager.put(ALL_INGREDIENTS_REQUEST, ingredients);
-            return ingredients;
-        }
+        LOGGER.info("retrieving ingredients from DB.");
+        return ingredientRepository.findAll();
     }
 
     //Post
     public void addNewIngredientByDishId(Long dishId, Ingredient ingredientRequest) {
         Dish dish = dishRepository.findById(dishId)
-                .orElseThrow(() -> new IllegalIdentifierException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "dish id: " + dishId + " does not exist, can't add ingredient to it."));
         Ingredient ingredient = ingredientRepository.findIngredientByName(ingredientRequest.getName());
         if (dish.getIngredients().stream().noneMatch(ingredientFunc -> ingredientFunc.getName().equals(ingredientRequest.getName()))) {
@@ -82,23 +70,25 @@ public class IngredientService {
                 dish.getIngredients().add(ingredientRequest);
                 addNutritionToDish(dish, ingredientRequest);
             }
-            CacheManager.clear();
         } else {
-            throw new IllegalStateException("ingredient with name " + ingredientRequest.getName()
+            LOGGER.info("New ingredient was not added to the dish.");
+            throw new EntityNotFoundException("ingredient with name " + ingredientRequest.getName()
                     + " already exists in the dish " + dish.getDishName() + ".");
         }
+        LOGGER.info("New ingredient was added to the dish.");
     }
 
     public void addExistingIngredientByDishId(Long dishId, Long ingredientId) {
         Dish dish = dishRepository.findById(dishId)
-                .orElseThrow(() -> new IllegalIdentifierException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "dish id: " + dishId + " does not exist, can't add ingredient to it."));
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalStateException(
-                        "ingredient with id: " + ingredientId + " does not exist, therefore cannot delete it"));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "ingredient id: " + ingredientId + " does not exist, therefore cannot delete it"));
         dish.getIngredients().add(ingredient);
+        LOGGER.info("The ingredient was added to the dish.");
         addNutritionToDish(dish, ingredient);
-        CacheManager.clear();
+        LOGGER.info("Nutritional data of the dish has been updated.");
     }
 
     //Put
@@ -110,12 +100,12 @@ public class IngredientService {
                                  Integer ingredientCalories,
                                  Integer ingredientWeight) {
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalStateException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "ingredient id: " + ingredientId + " does not exist, therefore can't update it."));
         if (ingredientName != null && !ingredientName.isEmpty() && !Objects.equals(ingredient.getName(), ingredientName)) {
             Optional<Ingredient> ingredientOptional = Optional.ofNullable(ingredientRepository.findIngredientByName(ingredientName));
             if (ingredientOptional.isPresent()) {
-                throw new IllegalStateException("ingredient with this name already exists.");
+                throw new EntityNotFoundException("ingredient with this name already exists.");
             }
             ingredient.setName(ingredientName);
         }
@@ -124,14 +114,14 @@ public class IngredientService {
         if (ingredientProteins != null && ingredientProteins >= 0) ingredient.setProteins(ingredientProteins);
         if (ingredientCalories != null && ingredientCalories >= 0) ingredient.setCalories(ingredientCalories);
         if (ingredientWeight != null && ingredientWeight >= 0) ingredient.setWeight(ingredientWeight);
-        CacheManager.clear();
+        LOGGER.info("The ingredient has been updated");
     }
 
     //Delete
     @Transactional
     public void deleteIngredient(Long ingredientId) {
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalStateException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "ingredient with id " + ingredientId + " does not exist, therefore can't delete it."));
         List<Dish> dishes = ingredient.getDishes();
         for (Dish dish : dishes) {
@@ -140,13 +130,13 @@ public class IngredientService {
             dishRepository.save(dish);
         }
         ingredientRepository.delete(ingredient);
-        CacheManager.clear();
+        LOGGER.info("The ingredient has been deleted from DB.");
     }
 
     @Transactional
     public void deleteIngredientFromDish(Long dishId, Long ingredientId) {
         Dish dish = dishRepository.findById(dishId)
-                .orElseThrow(() -> new IllegalStateException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "dish " + ingredientId + " does not exist, therefore cannot delete it."));
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalStateException(
@@ -154,7 +144,7 @@ public class IngredientService {
 
         subtractNutritionInDish(dish, ingredient);
         dish.getIngredients().remove(ingredient);
-        CacheManager.clear();
+        LOGGER.info("The ingredient has been updated from the dish.");
     }
 
     public void addNutritionToDish(Dish dish, Ingredient ingredient) {

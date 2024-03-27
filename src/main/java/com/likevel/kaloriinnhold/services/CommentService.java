@@ -1,15 +1,16 @@
 package com.likevel.kaloriinnhold.services;
 
-import com.likevel.kaloriinnhold.cache.CacheManager;
+import jakarta.persistence.EntityNotFoundException;
 import com.likevel.kaloriinnhold.model.Comment;
 import com.likevel.kaloriinnhold.model.Dish;
 import com.likevel.kaloriinnhold.repositories.CommentRepository;
 import com.likevel.kaloriinnhold.repositories.DishRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -19,36 +20,26 @@ import java.util.Optional;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final DishRepository dishRepository;
-    private static final String ALL_COMMENTS_REQUEST = "http://localhost:8080/api/comments";
-    private static final String COMMENTS_BY_ID_REQUEST = "http://localhost:8080/api/dishes/";
+    static final Logger LOGGER = LogManager.getLogger(DishService.class);
 
     //Get
     public List<Comment> getComments() {
-        if (CacheManager.containsKey(ALL_COMMENTS_REQUEST)) {
-            return (List<Comment>) CacheManager.get(ALL_COMMENTS_REQUEST);
-        } else {
-            List<Comment> comments = commentRepository.findAll();
-            CacheManager.put(ALL_COMMENTS_REQUEST, comments);
-            return comments;
-        }
+        LOGGER.info("Retrieving all the ingredients from DB.");
+        return commentRepository.findAll();
     }
 
     public List<Comment> getCommentsByDishId(Long dishId) {
-        String request = COMMENTS_BY_ID_REQUEST + dishId + "/comments";
-        if (CacheManager.containsKey(request)) {
-            return (List<Comment>) CacheManager.get(request);
-        } else {
-            Dish dish = dishRepository.findById(dishId).orElse(null);
-            List<Comment> comments = dish.getComments();
-            CacheManager.put(request, comments);
-            return comments;
-        }
+        Dish dish = dishRepository.findById(dishId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "dish with id " + dishId + " does not exist, therefore cannot view its comments."));
+        LOGGER.info("Comments from dish id have been retrieved.");
+        return dish.getComments();
     }
 
     //Post
     public void addNewCommentByDishId(Long dishId, Comment commentRequest) {
         Dish dish = dishRepository.findById(dishId)
-                .orElseThrow(() -> new IllegalStateException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "dish '" + dishId + "' does not exist, therefore cannot add new comment."));
         if (dish.getComments().stream().noneMatch(comment -> comment.getCommentText().equals(commentRequest.getCommentText()))
                 || dish.getComments().stream().noneMatch(comment -> comment.getUsername().equals(commentRequest.getUsername()))) {
@@ -56,9 +47,10 @@ public class CommentService {
             dish.getComments().add(commentRequest);
             commentRepository.save(commentRequest);
             dishRepository.save(dish);
-            CacheManager.clear();
+            LOGGER.info("New comment to the dish has been added.");
         } else {
-            throw new IllegalStateException("this comment with context \"" + commentRequest.getCommentText()
+            LOGGER.info("New comment to the dish hasn't been added.");
+            throw new EntityNotFoundException("this comment with context \"" + commentRequest.getCommentText()
                     + "\" and username " + commentRequest.getUsername() + "already exists on the dish page.");
         }
     }
@@ -69,11 +61,12 @@ public class CommentService {
                               String username,
                               String commentText) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalStateException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "comment with id " + commentId + " does not exist, therefore cannot be updated."));
         if (commentText != null && commentText.isEmpty() && Objects.equals(comment.getCommentText(), commentText)) {
             Optional<Comment> commentOptional = commentRepository.findCommentByCommentText(commentText);
             if (commentOptional.isPresent()) {
+                LOGGER.info("The comment was not updated.");
                 throw new IllegalStateException("identical comment already exists.");
             }
             comment.setCommentText(commentText);
@@ -81,29 +74,29 @@ public class CommentService {
         if (username != null && !username.isEmpty() && !Objects.equals(comment.getUsername(), username)) {
             comment.setUsername(username);
         }
-        CacheManager.clear();
+        LOGGER.info("The comment was updated.");
     }
 
     //Delete
     public void deleteCommentsByDishId(Long dishId) {
         Dish dish = dishRepository.findById(dishId)
-                .orElseThrow(() -> new IllegalStateException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "dish id " + dishId + " does not exist, therefore comments cannot be deleted"));
         dish.getComments().clear();
         dishRepository.save(dish);
-        CacheManager.clear();
+        LOGGER.info("The comment from the dish has been deleted.");
     }
 
     public void deleteComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalStateException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "comment with id " + commentId + " does not exist, therefore cannot be deleted."));
         Dish dish = comment.getDish();
 
-        dish.getComments().remove(comment);
+        dish.getIngredients().remove(comment);
         dishRepository.save(dish);
-
         commentRepository.delete(comment);
-        CacheManager.clear();
+        LOGGER.info("The comment has been deleted.");
     }
+
 }

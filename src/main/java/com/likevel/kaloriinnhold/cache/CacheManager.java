@@ -1,34 +1,41 @@
 package com.likevel.kaloriinnhold.cache;
-
+import com.likevel.kaloriinnhold.model.Comment;
+import com.likevel.kaloriinnhold.model.Dish;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @Component
 public class CacheManager {
-    private static Map<String, Object> cache = new HashMap<>();
+    private final ConcurrentMap<Long, Dish> cache = new ConcurrentHashMap<>();
 
-    public static void put(String key, Object value) {
-        cache.put(key, value);
+    public void put(Long id, Dish dish) {
+        cache.put(id, dish);
     }
 
-    public static Object get(String key) {
-        return cache.get(key);
+    public Dish get(Long id) {
+        return cache.get(id);
     }
 
-    public static void remove(String key) {
-        cache.remove(key);
+    public boolean contains(Long id) {
+        return cache.containsKey(id);
     }
 
-    public static boolean containsKey(String key) {
-        return cache.containsKey(key);
+    public void remove(Long id) {
+        cache.remove(id);
     }
-
-    public static void clear() {
+    public void clear(){
         cache.clear();
     }
-
-    private CacheManager() {
+    public List<Dish> getAllDishes() {
+        return new ArrayList<>(cache.values());
     }
+
+    public void putAllDishes(List<Dish> dishes) {
+        dishes.forEach(dish -> cache.put(dish.getId(), dish));
+    }
+
 }

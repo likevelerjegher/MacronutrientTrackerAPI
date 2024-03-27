@@ -1,5 +1,6 @@
 package com.likevel.kaloriinnhold.controllers;
 
+import com.likevel.kaloriinnhold.cache.CacheManager;
 import com.likevel.kaloriinnhold.model.Dish;
 import com.likevel.kaloriinnhold.services.DishService;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.List;
 public class DishController {
     //Get
     private final DishService dishService;
+    private final CacheManager cacheService;
 
     @GetMapping("/calculate")
     public ResponseEntity<Object> getDishesWithParams(@RequestParam(name = "name") String name,
@@ -25,6 +27,7 @@ public class DishController {
 
     @GetMapping("/{id}")
     public Dish getDishById(@PathVariable("id") Long dishId) {
+        //try
         return dishService.getDishById(dishId);
     }
 
