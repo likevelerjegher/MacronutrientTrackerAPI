@@ -5,6 +5,7 @@ import com.likevel.kaloriinnhold.model.Dish;
 import com.likevel.kaloriinnhold.repositories.DishRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-
+@AllArgsConstructor
 public class DishService {
 
     private final DishRepository dishRepository;
-    private final CacheManager cache;
+    private final CacheManager<String, Object> cache;
     static final Logger LOGGER = LogManager.getLogger(DishService.class);
+    private static final String DISH = "dish";
 
     @Autowired
     public DishService(DishRepository dishRepository, CacheManager cache) {
@@ -50,25 +52,19 @@ public class DishService {
     }
 
     public List<Dish> getDishes() {
-        if (!cache.getAllDishes().isEmpty()) {
-            LOGGER.info("Retrieving all the dishes from cache.");
-            return cache.getAllDishes();
-        } else {
-            List<Dish> dishes = dishRepository.findAll();
-            LOGGER.info("Adding dishes to cache and retrieving them from DB.");
-            cache.putAllDishes(dishes);
-            return dishes;
-        }
+        LOGGER.info("Retrieving all the dishes from cache.");
+        return dishRepository.findAll();
     }
 
     public Dish getDishById(Long dishId) {
-        if (cache.contains(dishId)) {
+        Object cachedData = cache.get(DISH + dishId.toString());
+        if (cachedData!=null) {
             LOGGER.info("Retrieving the dish from cache by id.");
-            return cache.get(dishId);
+            return (Dish) cachedData;
         } else {
             Dish dish = dishRepository.findById(dishId).orElse(null);
             if (dish != null) {
-                cache.put(dishId, dish);
+                cache.put(DISH + dishId, dish);
                 LOGGER.info("Adding dish to cache and retrieving it from DB.");
             }
             return dish;
@@ -89,7 +85,7 @@ public class DishService {
             throw new IllegalStateException("dish with this name already exists.");
         }
         Dish newDish = dishRepository.save(dish);
-        cache.put(newDish.getId(), newDish);
+        cache.put(DISH + dish.getId().toString(), newDish);
         LOGGER.info("The dish is created.");
     }
 
@@ -115,7 +111,7 @@ public class DishService {
             LOGGER.info("Dish servings are updated.");
 
         }
-        cache.put(dishId, dish);
+        cache.put(DISH + dishId, dish);
         LOGGER.info("The dish is updated.");
     }
 
@@ -127,7 +123,7 @@ public class DishService {
                     "dish id: " + dishId + "is not deleted (does not exist)");
         }
         dishRepository.deleteById(dishId);
-        cache.remove(dishId);
+        cache.remove(DISH + dishId);
         LOGGER.info("The dish is deleted.");
 
     }
@@ -136,7 +132,5 @@ public class DishService {
         dishRepository.deleteAll();
         cache.clear();
         LOGGER.info("All the dishes are deleted.");
-
     }
-
 }

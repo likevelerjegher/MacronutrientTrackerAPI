@@ -16,8 +16,6 @@ import java.util.List;
 public class DishController {
     //Get
     private final DishService dishService;
-    private final CacheManager cacheService;
-
     @GetMapping("/calculate")
     public ResponseEntity<Object> getDishesWithParams(@RequestParam(name = "name") String name,
                                                       @RequestParam(name = "weight") Long weight) {
