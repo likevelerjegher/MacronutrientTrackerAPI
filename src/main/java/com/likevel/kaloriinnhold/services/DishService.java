@@ -29,7 +29,7 @@ public class DishService {
     private static final String DISH = "dish";
 
     @Autowired
-    public DishService(DishRepository dishRepository, CacheManager cache) {
+    public DishService(DishRepository dishRepository, CacheManager<String, Object> cache) {
         this.dishRepository = dishRepository;
         this.cache = cache;
     }

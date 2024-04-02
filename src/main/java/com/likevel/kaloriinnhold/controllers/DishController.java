@@ -1,6 +1,5 @@
 package com.likevel.kaloriinnhold.controllers;
 
-import com.likevel.kaloriinnhold.cache.CacheManager;
 import com.likevel.kaloriinnhold.model.Dish;
 import com.likevel.kaloriinnhold.services.DishService;
 import lombok.AllArgsConstructor;
