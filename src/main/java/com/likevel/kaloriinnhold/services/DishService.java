@@ -6,8 +6,7 @@ import com.likevel.kaloriinnhold.repositories.DishRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -19,13 +18,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class DishService {
 
     private final DishRepository dishRepository;
     private final CacheManager<String, Object> cache;
-    static final Logger LOGGER = LogManager.getLogger(DishService.class);
     private static final String DISH = "dish";
 
     @Autowired
@@ -52,27 +51,23 @@ public class DishService {
     }
 
     public List<Dish> getDishes() {
-        LOGGER.info("Retrieving all the dishes from cache.");
         return dishRepository.findAll();
     }
 
     public Dish getDishById(Long dishId) {
         Object cachedData = cache.get(DISH + dishId.toString());
         if (cachedData!=null) {
-            LOGGER.info("Retrieving the dish from cache by id.");
             return (Dish) cachedData;
         } else {
             Dish dish = dishRepository.findById(dishId).orElse(null);
             if (dish != null) {
                 cache.put(DISH + dishId, dish);
-                LOGGER.info("Adding dish to cache and retrieving it from DB.");
             }
             return dish;
         }
     }
 
     public List<Dish> getDishesWithLessOrSameCalories(Integer calories) {
-        LOGGER.info("Displaying dishes with limited amount of calories.");
         return dishRepository.getDishesWithLessOrSameCalories(calories);
     }
 
@@ -81,12 +76,10 @@ public class DishService {
         Optional<Dish> dishOptional = dishRepository
                 .findDishByDishName(dish.getDishName());
         if (dishOptional.isPresent()) {
-            LOGGER.info("The dish is not created.");
             throw new IllegalStateException("dish with this name already exists.");
         }
         Dish newDish = dishRepository.save(dish);
         cache.put(DISH + dish.getId().toString(), newDish);
-        LOGGER.info("The dish is created.");
     }
 
     //Put
@@ -103,16 +96,11 @@ public class DishService {
                 throw new EntityNotFoundException("dish with this name already exists.");
             }
             dish.setDishName(dishName);
-            LOGGER.info("Dish name is updated.");
-
         }
         if (servings != null && servings > 0) {
             dish.setServings(servings);
-            LOGGER.info("Dish servings are updated.");
-
         }
         cache.put(DISH + dishId, dish);
-        LOGGER.info("The dish is updated.");
     }
 
     //Delete
@@ -124,13 +112,10 @@ public class DishService {
         }
         dishRepository.deleteById(dishId);
         cache.remove(DISH + dishId);
-        LOGGER.info("The dish is deleted.");
-
     }
 
     public void deleteDishes() {
         dishRepository.deleteAll();
         cache.clear();
-        LOGGER.info("All the dishes are deleted.");
     }
 }
