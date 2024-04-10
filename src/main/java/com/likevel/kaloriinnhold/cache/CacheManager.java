@@ -1,8 +1,8 @@
 package com.likevel.kaloriinnhold.cache;
 
-import org.springframework.stereotype.Component;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.springframework.stereotype.Component;
 
 @Component
 public class CacheManager<K, V> extends LinkedHashMap<K, V> {

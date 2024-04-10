@@ -25,7 +25,7 @@ public class DishService {
 
     private final DishRepository dishRepository;
     private final CacheManager<String, Object> cache;
-    private static final String DISH = "dish";
+    private static final String DISH = "dish ";
 
     @Autowired
     public DishService(DishRepository dishRepository, CacheManager<String, Object> cache) {
