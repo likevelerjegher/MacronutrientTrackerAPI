@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<module name="ImportControl">
+
+    <!-- Allow imports from the org.example package with strategyOnMismatch="allowed" -->
+    <property name="pkg" value="org.example"/>
+    <property name="strategyOnMismatch" value="allowed"/>
+
+    <!-- Define subpackages -->
+    <module name="PackageMatcher">
+        <property name="name" value="base"/>
+
+        <!-- Allow org.example.base.* -->
+        <module name="PackageIllegalSubmodule">
+            <property name="name" value="org\.example\.(?!base).*"/>
+        </module>
+
+        <!-- Define subpackage: data -->
+        <module name="PackageMatcher">
+            <property name="name" value="data"/>
+
+            <!-- Allow org.example.base.data and org.example.base.domain.* -->
+            <module name="PackageIllegalSubmodule">
+                <property name="name" value="org\.example\.base\.(data|domain).*"/>
+            </module>
+
+            <!-- Disallow org.example.base.presentation.* -->
+            <module name="PackageIllegalSubmodule">
+                <property name="name" value="org\.example\.base\.presentation.*"/>
+            </module>
+        </module>
+
+        <!-- Define subpackage: presentation -->
+        <module name="PackageMatcher">
+            <property name="name" value="presentation"/>
+
+            <!-- Allow org.example.base.presentation.* and org.example.base.domain.* -->
+            <module name="PackageIllegalSubmodule">
+                <property name="name" value="org\.example\.base\.(domain|presentation).*"/>
+            </module>
+
+            <!-- Disallow org.example.base.data.* -->
+            <module name="PackageIllegalSubmodule">
+                <property name="name" value="org\.example\.base\.data.*"/>
+            </module>
+        </module>
+
+        <!-- Define subpackage: domain -->
+        <module name="PackageMatcher">
+            <property name="name" value="domain"/>
+
+            <!-- Allow org.example.base.domain.* -->
+            <module name="PackageIllegalSubmodule">
+                <property name="name" value="org\.example\.base\.domain.*"/>
+            </module>
+
+            <!-- Disallow org.example.base.data.* and org.example.base.presentation.* -->
+            <module name="PackageIllegalSubmodule">
+                <property name="name" value="org\.example\.base\.(data|presentation).*"/>
+            </module>
+        </module>
+
+    </module>
+
+</module>

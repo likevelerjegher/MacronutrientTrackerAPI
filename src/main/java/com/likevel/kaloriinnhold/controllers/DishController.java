@@ -26,7 +26,7 @@ public class DishController {
     //Get
     private final DishService dishService;
     @GetMapping("/calculate")
-    public ResponseEntity<Object> getDishesWithParams(@RequestParam(name = "name") String name,
+    public ResponseEntity<Object> getDishesWithParams(@RequestParam(name = "name", required = false) String name,
                                                       @RequestParam(name = "weight") Long weight) {
         return new ResponseEntity<>(dishService.getNutritionalData(name, weight), HttpStatus.OK);
 

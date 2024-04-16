@@ -1,5 +1,7 @@
 package com.likevel.kaloriinnhold.services;
 
+import com.likevel.kaloriinnhold.exception.ObjectExistedException;
+import com.likevel.kaloriinnhold.exception.ObjectNotFoundException;
 import com.likevel.kaloriinnhold.model.Dish;
 import com.likevel.kaloriinnhold.model.Ingredient;
 import com.likevel.kaloriinnhold.repositories.DishRepository;
@@ -30,14 +32,14 @@ public class IngredientService {
     //Get
     public List<Ingredient> getIngredientsByDishId(Long dishId) {
         Dish dish = dishRepository.findById(dishId)
-                .orElseThrow(() -> new EntityNotFoundException(
+                .orElseThrow(() -> new ObjectNotFoundException(
                         "dish '" + dishId + "' does not exist, can't view its ingredients."));
         return dish.getIngredients();
     }
 
     public List<Dish> getDishesByIngredientId(Long ingredientId) {
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new EntityNotFoundException(
+                .orElseThrow(() -> new ObjectNotFoundException(
                         "ingredient with id " + ingredientId + " does not exist, can't view its dishes."));
         return ingredient.getDishes();
     }
@@ -49,7 +51,7 @@ public class IngredientService {
     //Post
     public void addNewIngredientByDishId(Long dishId, Ingredient ingredientRequest) {
         Dish dish = dishRepository.findById(dishId)
-                .orElseThrow(() -> new EntityNotFoundException(
+                .orElseThrow(() -> new ObjectNotFoundException(
                         "dish id: " + dishId + " does not exist, can't add ingredient to it."));
         Ingredient ingredient = ingredientRepository.findIngredientByName(ingredientRequest.getName());
         if (dish.getIngredients().stream().noneMatch(ingredientFunc -> ingredientFunc.getName().equals(ingredientRequest.getName()))) {
@@ -63,17 +65,17 @@ public class IngredientService {
                 addNutritionToDish(dish, ingredientRequest);
             }
         } else {
-            throw new EntityNotFoundException("ingredient with name " + ingredientRequest.getName()
+            throw new ObjectExistedException("ingredient with name " + ingredientRequest.getName()
                     + " already exists in the dish " + dish.getDishName() + ".");
         }
     }
 
     public void addExistingIngredientByDishId(Long dishId, Long ingredientId) {
         Dish dish = dishRepository.findById(dishId)
-                .orElseThrow(() -> new EntityNotFoundException(
+                .orElseThrow(() -> new ObjectNotFoundException(
                         "dish id: " + dishId + " does not exist, can't add ingredient to it."));
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new EntityNotFoundException(
+                .orElseThrow(() -> new ObjectNotFoundException(
                         "ingredient id: " + ingredientId + " does not exist, therefore cannot delete it"));
         dish.getIngredients().add(ingredient);
         addNutritionToDish(dish, ingredient);
@@ -88,12 +90,12 @@ public class IngredientService {
                                  Integer ingredientCalories,
                                  Integer ingredientWeight) {
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new EntityNotFoundException(
+                .orElseThrow(() -> new ObjectNotFoundException(
                         "ingredient id: " + ingredientId + " does not exist, therefore can't update it."));
         if (ingredientName != null && !ingredientName.isEmpty() && !Objects.equals(ingredient.getName(), ingredientName)) {
             Optional<Ingredient> ingredientOptional = Optional.ofNullable(ingredientRepository.findIngredientByName(ingredientName));
             if (ingredientOptional.isPresent()) {
-                throw new EntityNotFoundException("ingredient with this name already exists.");
+                throw new ObjectExistedException("ingredient with this name already exists.");
             }
             ingredient.setName(ingredientName);
         }
@@ -108,7 +110,7 @@ public class IngredientService {
     @Transactional
     public void deleteIngredient(Long ingredientId) {
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new EntityNotFoundException(
+                .orElseThrow(() -> new ObjectNotFoundException(
                         "ingredient with id " + ingredientId + " does not exist, therefore can't delete it."));
         List<Dish> dishes = ingredient.getDishes();
         for (Dish dish : dishes) {
@@ -122,10 +124,10 @@ public class IngredientService {
     @Transactional
     public void deleteIngredientFromDish(Long dishId, Long ingredientId) {
         Dish dish = dishRepository.findById(dishId)
-                .orElseThrow(() -> new EntityNotFoundException(
+                .orElseThrow(() -> new ObjectNotFoundException(
                         "dish " + ingredientId + " does not exist, therefore cannot delete it."));
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalStateException(
+                .orElseThrow(() -> new ObjectNotFoundException(
                         "ingredient " + ingredientId + " does not exist, therefore cannot delete it"));
 
         subtractNutritionInDish(dish, ingredient);

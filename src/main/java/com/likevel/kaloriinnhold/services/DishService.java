@@ -1,9 +1,10 @@
 package com.likevel.kaloriinnhold.services;
 
 import com.likevel.kaloriinnhold.cache.CacheManager;
+import com.likevel.kaloriinnhold.exception.ObjectExistedException;
+import com.likevel.kaloriinnhold.exception.ObjectNotFoundException;
 import com.likevel.kaloriinnhold.model.Dish;
 import com.likevel.kaloriinnhold.repositories.DishRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,7 +77,7 @@ public class DishService {
         Optional<Dish> dishOptional = dishRepository
                 .findDishByDishName(dish.getDishName());
         if (dishOptional.isPresent()) {
-            throw new IllegalStateException("dish with this name already exists.");
+            throw new ObjectExistedException("dish with this name already exists.");
         }
         Dish newDish = dishRepository.save(dish);
         cache.put(DISH + dish.getId().toString(), newDish);
@@ -88,12 +89,12 @@ public class DishService {
                            Float servings) {
 
         Dish dish = dishRepository.findById(dishId)
-                .orElseThrow(() -> new EntityNotFoundException(
+                .orElseThrow(() -> new ObjectNotFoundException(
                         "dish with id " + dishId + "is not updated (does not exist)."));
         if (dishName != null && !dishName.isEmpty() && !Objects.equals(dish.getDishName(), dishName)) {
             Optional<Dish> dishOptional = dishRepository.findDishByDishName(dishName);
             if (dishOptional.isPresent()) {
-                throw new EntityNotFoundException("dish with this name already exists.");
+                throw new ObjectExistedException("dish with this name already exists.");
             }
             dish.setDishName(dishName);
         }
@@ -107,7 +108,7 @@ public class DishService {
     public void deleteDish(Long dishId) {
         boolean exists = dishRepository.existsById(dishId);
         if (!exists) {
-            throw new EntityNotFoundException(
+            throw new ObjectNotFoundException(
                     "dish id: " + dishId + "is not deleted (does not exist)");
         }
         dishRepository.deleteById(dishId);

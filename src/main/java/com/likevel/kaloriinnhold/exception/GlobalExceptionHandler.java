@@ -1,50 +1,72 @@
 package com.likevel.kaloriinnhold.exception;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.Date;
-
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
+    static final Logger LOGGER = LogManager
+            .getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(ObjectNotFoundException.class)
-    public ResponseEntity<ExceptionErrorMessage> objectNotFoundException(
-            final ObjectNotFoundException ex, final WebRequest request) {
-        ExceptionErrorMessage message = new ExceptionErrorMessage(
-                HttpStatus.BAD_REQUEST.value(),
-                new Date(),
-                ex.getMessage(),
-                request.getDescription(false));
+    /**
+     * Handles HTTP client error exceptions.
+     *
+     * @param ex the thrown HTTP client error exception
+     * @param request the web request
+     * @return a response entity with a status code and error message
+     */
 
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler({HttpClientErrorException.class})
+    public ResponseEntity<Object> handleHttpClientErrorException(
+            final HttpClientErrorException ex, final WebRequest request) {
+        LOGGER.error("400 Bad Requestttt");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("400 Bad Requestttt");
+    }
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<Object> handleMissingServletRequestParameterException(
+            final MissingServletRequestParameterException ex, final WebRequest request) {
+        LOGGER.error("400 Bad Request.");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("400 Bad Request.");
     }
 
-    @ExceptionHandler(ObjectExistedException.class)
-    public ResponseEntity<ExceptionErrorMessage> objectExistedException(
-            final ObjectExistedException ex, final WebRequest request) {
-        ExceptionErrorMessage message = new ExceptionErrorMessage(
-                HttpStatus.CONFLICT.value(),
-                new Date(),
-                ex.getMessage(),
-                request.getDescription(false));
-
-        return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+    /**
+     * Handles HTTP request method not supported exceptions.
+     *
+     * @param ex the thrown HTTP request method not supported exception
+     * @param request the web request
+     * @return a response entity with a status code and error message
+     */
+    @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
+    public ResponseEntity<Object> handleMethodNotSupportedException(
+            final HttpRequestMethodNotSupportedException ex,
+            final WebRequest request) {
+        LOGGER.error("405 Method Not Allowed");
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body("405 Method Not Allowed");
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionErrorMessage> globalExceptionHandler(
-            final Exception ex, final WebRequest request) {
-        ExceptionErrorMessage message = new ExceptionErrorMessage(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                new Date(),
-                ex.getMessage(),
-                request.getDescription(false));
-
-        return new ResponseEntity<>(message,
-                HttpStatus.INTERNAL_SERVER_ERROR);
+    /**
+     * Handles runtime exceptions.
+     *
+     * @param ex the thrown runtime exception
+     * @param request the web request
+     * @return a response entity with a status code and error message
+     */
+    @ExceptionHandler({RuntimeException.class})
+    public ResponseEntity<Object> handleRuntimeException(
+            final RuntimeException ex, final WebRequest request) {
+        LOGGER.error("500 Internal Server Errorrr");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("500 Internal Server Errorrr");
     }
 }
