@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface DishRepository extends CrudRepository<Dish, Long> {
     @Query("SELECT a FROM Dish a WHERE a.dishCalories <= :caloriesLimit ORDER BY a.dishCalories DESC")
     List<Dish> getDishesWithLessOrSameCalories(@Param("caloriesLimit")Integer caloriesLimit);
-    boolean existsByName(String name);
-    Optional<Dish> findDishByDishName(String name);
+    boolean existsByDishName(String dishName);
+    Optional<Dish> findDishByDishName(String dishName);
     List<Dish> findAll();
 }

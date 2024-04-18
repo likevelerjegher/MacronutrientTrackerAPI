@@ -75,11 +75,11 @@ public class DishService {
 
     public List<Dish> saveDishes(final List<Dish> dishes) {
         List<Dish> existingDishes = dishes.stream()
-                .filter(dish -> dishRepository.existsByName(dish.getDishName()))
+                .filter(dish -> dishRepository.existsByDishName(dish.getDishName()))
                 .toList();
 
         List<Dish> createdDishes = dishes.stream()
-                .filter(dish -> !dishRepository.existsByName(dish.getDishName()))
+                .filter(dish -> !dishRepository.existsByDishName(dish.getDishName()))
                 .map(dishRepository::save)
                 .toList();
         existingDishes.forEach(dish -> logger.warn("City with name '{}' already exists", dish.getDishName()));

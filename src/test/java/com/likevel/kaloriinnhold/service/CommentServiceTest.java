@@ -133,9 +133,7 @@ class CommentServiceTest {
         comment.setId(commentId);
 
         when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
-
         commentService.deleteComment(commentId);
-
         verify(commentRepository, times(1)).delete(comment);
     }
 }

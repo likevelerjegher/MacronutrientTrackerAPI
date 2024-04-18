@@ -207,7 +207,7 @@ class DishServiceTest {
         dish1.setId(1L);
         dishes.add(dish1);
 
-        when(dishRepository.existsByName(anyString())).thenReturn(false);
+        when(dishRepository.existsByDishName(anyString())).thenReturn(false);
         when(dishRepository.save(any(Dish.class))).thenReturn(dish1);
 
         // Act
