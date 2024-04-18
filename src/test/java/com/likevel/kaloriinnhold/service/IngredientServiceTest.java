@@ -1,6 +1,5 @@
 package com.likevel.kaloriinnhold.service;
 
-import com.likevel.kaloriinnhold.exception.ObjectExistedException;
 import com.likevel.kaloriinnhold.exception.ObjectNotFoundException;
 import com.likevel.kaloriinnhold.model.Dish;
 import com.likevel.kaloriinnhold.model.Ingredient;
@@ -9,7 +8,6 @@ import com.likevel.kaloriinnhold.repositories.IngredientRepository;
 import com.likevel.kaloriinnhold.services.IngredientService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -19,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -65,9 +62,7 @@ class IngredientServiceTest {
         when(dishRepository.findById(dishId)).thenReturn(Optional.empty());
 
         // Act and Assert
-        assertThrows(ObjectNotFoundException.class, () -> {
-            ingredientService.getIngredientsByDishId(dishId);
-        });
+        assertThrows(ObjectNotFoundException.class, () -> ingredientService.getIngredientsByDishId(dishId));
     }
 
     @Test
@@ -97,9 +92,7 @@ class IngredientServiceTest {
         when(ingredientRepository.findById(ingredientId)).thenReturn(Optional.empty());
 
         // Act and Assert
-        assertThrows(ObjectNotFoundException.class, () -> {
-            ingredientService.getDishesByIngredientId(ingredientId);
-        });
+        assertThrows(ObjectNotFoundException.class, () -> ingredientService.getDishesByIngredientId(ingredientId));
     }
 
     @Test
@@ -240,9 +233,7 @@ class IngredientServiceTest {
         when(ingredientRepository.findById(ingredientId)).thenReturn(Optional.empty());
 
         // Act and Assert
-        assertThrows(ObjectNotFoundException.class, () -> {
-            ingredientService.deleteIngredient(ingredientId);
-        });
+        assertThrows(ObjectNotFoundException.class, () -> ingredientService.deleteIngredient(ingredientId));
 
         verify(ingredientRepository, never()).delete(any(Ingredient.class));
         verify(dishRepository, never()).save(any(Dish.class));
@@ -258,9 +249,7 @@ class IngredientServiceTest {
         when(dishRepository.findById(dishId)).thenReturn(Optional.empty());
 
         // Act and Assert
-        assertThrows(ObjectNotFoundException.class, () -> {
-            ingredientService.deleteIngredientFromDish(dishId, ingredientId);
-        });
+        assertThrows(ObjectNotFoundException.class, () -> ingredientService.deleteIngredientFromDish(dishId, ingredientId));
 
         verifyNoMoreInteractions(ingredientRepository);
     }
@@ -274,9 +263,7 @@ class IngredientServiceTest {
         when(dishRepository.findById(dishId)).thenReturn(Optional.empty());
 
         // Act and Assert
-        assertThrows(ObjectNotFoundException.class, () -> {
-            ingredientService.deleteIngredientFromDish(dishId, ingredientId);
-        });
+        assertThrows(ObjectNotFoundException.class, () -> ingredientService.deleteIngredientFromDish(dishId, ingredientId));
     }
     @Test
     void addExistingIngredientByDishId_ExistingIngredient_SuccessfullyAdded() {
@@ -334,24 +321,6 @@ class IngredientServiceTest {
         verify(ingredientRepository, times(1)).findById(ingredientId);
         verify(dishRepository, never()).save(any(Dish.class));
     }
-//    @Test
-//    void addNewIngredientByDishId_ExistingDishAndNewIngredient_SuccessfullyAdded() {
-//        // Arrange
-//        Long dishId = 1L;
-//        Ingredient ingredient = new Ingredient();
-//
-//        when(dishRepository.existsById(dishId)).thenReturn(true);
-//        when(ingredientRepository.save(ingredient)).thenReturn(ingredient);
-//
-//        // Act
-//        Ingredient result = ingredientService.addNewIngredientByDishId(dishId, ingredient);
-//
-//        // Assert
-//        assertNotNull(result);
-//        assertTrue(result.getId() > 0); // Assuming the ID is generated upon saving
-//        verify(dishRepository, times(1)).existsById(dishId);
-//        verify(ingredientRepository, times(1)).save(ingredient);
-//    }
 
     @Test
     void addNewIngredientByDishId_NonExistingDish_ObjectNotFoundExceptionThrown() {
@@ -366,4 +335,36 @@ class IngredientServiceTest {
                 () -> ingredientService.addNewIngredientByDishId(dishId, ingredient));
         verify(ingredientRepository, never()).save(any(Ingredient.class));
     }
+    @Test
+    void updateIngredient_ExistingIngredient_SuccessfullyUpdated() {
+        // Arrange
+        Long ingredientId = 1L;
+        String ingredientName = "New Name";
+        Float ingredientFats = 10.0f;
+        Float ingredientCarbs = 20.0f;
+        Float ingredientProteins = 30.0f;
+        Integer ingredientCalories = 200;
+        Integer ingredientWeight = 100;
+
+        Ingredient existingIngredient = new Ingredient();
+        existingIngredient.setId(ingredientId);
+        existingIngredient.setName("Old Name");
+        // Set initial values for other attributes as needed
+
+        when(ingredientRepository.findById(ingredientId)).thenReturn(Optional.of(existingIngredient));
+
+        // Act
+        ingredientService.updateIngredient(ingredientId, ingredientName, ingredientFats,
+                ingredientCarbs, ingredientProteins, ingredientCalories, ingredientWeight);
+
+        // Assert
+        assertEquals(ingredientName, existingIngredient.getName());
+        assertEquals(ingredientFats, existingIngredient.getFats());
+        assertEquals(ingredientCarbs, existingIngredient.getCarbs());
+        assertEquals(ingredientProteins, existingIngredient.getProteins());
+        assertEquals(ingredientCalories, existingIngredient.getCalories());
+        assertEquals(ingredientWeight, existingIngredient.getWeight());
+        verify(ingredientRepository, times(1)).findById(ingredientId);
+    }
+
 }

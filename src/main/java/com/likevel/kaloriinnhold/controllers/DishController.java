@@ -4,8 +4,6 @@ import com.likevel.kaloriinnhold.model.Dish;
 import com.likevel.kaloriinnhold.services.DishService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,12 +23,6 @@ import java.util.List;
 public class DishController {
     //Get
     private final DishService dishService;
-//    @GetMapping("/calculate")
-//    public ResponseEntity<Object> getDishesWithParams(@RequestParam(name = "name", required = false) String name,
-//                                                      @RequestParam(name = "weight") Long weight) {
-//        return new ResponseEntity<>(dishService.getNutritionalData(name, weight), HttpStatus.OK);
-//
-//    }
 
     @GetMapping("/{id}")
     public Dish getDishById(@PathVariable("id") Long dishId) {

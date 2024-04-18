@@ -61,17 +61,17 @@ class DishServiceTest {
         // Arrange
         Long dishId = 1L;
         Dish expectedDish = new Dish();
-        when(cache.get(eq("dish 1"))).thenReturn(null);
-        when(dishRepository.findById(eq(dishId))).thenReturn(Optional.of(expectedDish));
+        when(cache.get("dish 1")).thenReturn(null);
+        when(dishRepository.findById(dishId)).thenReturn(Optional.of(expectedDish));
 
         // Act
         Dish dish = dishService.getDishById(dishId);
 
         // Assert
         assertEquals(expectedDish, dish);
-        verify(cache, times(1)).get(eq("dish 1"));
-        verify(dishRepository, times(1)).findById(eq(dishId));
-        verify(cache, times(1)).put(eq("dish 1"), eq(expectedDish));
+        verify(cache, times(1)).get("dish 1");
+        verify(dishRepository, times(1)).findById(dishId);
+        verify(cache, times(1)).put("dish 1", expectedDish);
     }
 
     @Test
@@ -79,14 +79,14 @@ class DishServiceTest {
         // Arrange
         Long dishId = 1L;
         Dish expectedDish = new Dish();
-        when(cache.get(eq("dish 1"))).thenReturn(expectedDish);
+        when(cache.get("dish 1")).thenReturn(expectedDish);
 
         // Act
         Dish dish = dishService.getDishById(dishId);
 
         // Assert
         assertEquals(expectedDish, dish);
-        verify(cache, times(1)).get(eq("dish 1"));
+        verify(cache, times(1)).get("dish 1");
         verify(dishRepository, times(0)).findById(anyLong());
     }
     @Test
@@ -94,14 +94,14 @@ class DishServiceTest {
         // Arrange
         Integer calories = 500;
         List<Dish> expectedDishes = new ArrayList<>();
-        when(dishRepository.getDishesWithLessOrSameCalories(eq(calories))).thenReturn(expectedDishes);
+        when(dishRepository.getDishesWithLessOrSameCalories(calories)).thenReturn(expectedDishes);
 
         // Act
         List<Dish> dishes = dishService.getDishesWithLessOrSameCalories(calories);
 
         // Assert
         assertEquals(expectedDishes, dishes);
-        verify(dishRepository, times(1)).getDishesWithLessOrSameCalories(eq(calories));
+        verify(dishRepository, times(1)).getDishesWithLessOrSameCalories(calories);
     }
 
     @Test
@@ -109,16 +109,16 @@ class DishServiceTest {
         // Arrange
         Dish dish = new Dish();
         dish.setDishName("New Dish");
-        when(dishRepository.findDishByDishName(eq(dish.getDishName()))).thenReturn(Optional.empty());
-        when(dishRepository.save(eq(dish))).thenReturn(dish);
+        when(dishRepository.findDishByDishName(dish.getDishName())).thenReturn(Optional.empty());
+        when(dishRepository.save(dish)).thenReturn(dish);
 
         // Act
         dishService.createNewDish(dish);
 
         // Assert
-        verify(dishRepository, times(1)).findDishByDishName(eq(dish.getDishName()));
-        verify(dishRepository, times(1)).save(eq(dish));
-        verify(cache, times(1)).put(eq("dish " + dish.getId().toString()), eq(dish));
+        verify(dishRepository, times(1)).findDishByDishName(dish.getDishName());
+        verify(dishRepository, times(1)).save(dish);
+        verify(cache, times(1)).put("dish " + dish.getId().toString(), dish);
     }
 
     @Test
@@ -126,11 +126,11 @@ class DishServiceTest {
         // Arrange
         Dish dish = new Dish();
         dish.setDishName("Existing Dish");
-        when(dishRepository.findDishByDishName(eq(dish.getDishName()))).thenReturn(Optional.of(dish));
+        when(dishRepository.findDishByDishName(dish.getDishName())).thenReturn(Optional.of(dish));
 
         // Act & Assert
         assertThrows(ObjectExistedException.class, () -> dishService.createNewDish(dish));
-        verify(dishRepository, times(1)).findDishByDishName(eq(dish.getDishName()));
+        verify(dishRepository, times(1)).findDishByDishName(dish.getDishName());
         verify(dishRepository, times(0)).save(any(Dish.class));
         verify(cache, times(0)).put(anyString(), any(Dish.class));
     }
@@ -146,8 +146,8 @@ class DishServiceTest {
         dish.setId(dishId);
         dish.setDishName("Original Dish");
         dish.setServings(1.0f);
-        when(dishRepository.findById(eq(dishId))).thenReturn(Optional.of(dish));
-        when(dishRepository.findDishByDishName(eq(dishName))).thenReturn(Optional.empty());
+        when(dishRepository.findById(dishId)).thenReturn(Optional.of(dish));
+        when(dishRepository.findDishByDishName(dishName)).thenReturn(Optional.empty());
 
         // Act
         dishService.updateDish(dishId, dishName, servings);
@@ -155,36 +155,36 @@ class DishServiceTest {
         // Assert
         assertEquals(dishName, dish.getDishName());
         assertEquals(servings, dish.getServings());
-        verify(dishRepository, times(1)).findById(eq(dishId));
-        verify(dishRepository, times(1)).findDishByDishName(eq(dishName));
+        verify(dishRepository, times(1)).findById(dishId);
+        verify(dishRepository, times(1)).findDishByDishName(dishName);
         verify(dishRepository, times(0)).save(any(Dish.class));
-        verify(cache, times(1)).put(eq("dish 1"), eq(dish));
+        verify(cache, times(1)).put("dish 1", dish);
     }
 
     @Test
     void testDeleteDish_ExistingDishId_DeletesDish() {
         // Arrange
         Long dishId = 1L;
-        when(dishRepository.existsById(eq(dishId))).thenReturn(true);
+        when(dishRepository.existsById(dishId)).thenReturn(true);
 
         // Act
         dishService.deleteDish(dishId);
 
         // Assert
-        verify(dishRepository, times(1)).existsById(eq(dishId));
-        verify(dishRepository, times(1)).deleteById(eq(dishId));
-        verify(cache, times(1)).remove(eq("dish 1"));
+        verify(dishRepository, times(1)).existsById(dishId);
+        verify(dishRepository, times(1)).deleteById(dishId);
+        verify(cache, times(1)).remove("dish 1");
     }
 
     @Test
     void testDeleteDish_NonExistentDishId_ThrowsObjectNotFoundException() {
         // Arrange
         Long dishId = 1L;
-        when(dishRepository.existsById(eq(dishId))).thenReturn(false);
+        when(dishRepository.existsById(dishId)).thenReturn(false);
 
         // Act & Assert
         assertThrows(ObjectNotFoundException.class, () -> dishService.deleteDish(dishId));
-        verify(dishRepository, times(1)).existsById(eq(dishId));
+        verify(dishRepository, times(1)).existsById(dishId);
         verify(dishRepository, times(0)).deleteById(anyLong());
         verify(cache, times(0)).remove(anyString());
     }
