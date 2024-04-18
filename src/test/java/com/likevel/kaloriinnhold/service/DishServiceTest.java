@@ -1,7 +1,7 @@
 package com.likevel.kaloriinnhold.service;
 
-import com.likevel.kaloriinnhold.cache.CacheManager;
 import com.likevel.kaloriinnhold.exception.ObjectExistedException;
+import com.likevel.kaloriinnhold.cache.CacheManager;
 import com.likevel.kaloriinnhold.exception.ObjectNotFoundException;
 import com.likevel.kaloriinnhold.model.Dish;
 import com.likevel.kaloriinnhold.repositories.DishRepository;
@@ -197,5 +197,24 @@ class DishServiceTest {
         // Assert
         verify(dishRepository, times(1)).deleteAll();
         verify(cache, times(1)).clear();
+    }
+    @Test
+    public void testSaveDishes_WithNoExistingDishes_ShouldCreateDishes() {
+        // Arrange
+        List<Dish> dishes = new ArrayList<>();
+        Dish dish1 = new Dish();
+        dish1.setDishName("Dish 1");
+        dish1.setId(1L);
+        dishes.add(dish1);
+
+        when(dishRepository.existsByName(anyString())).thenReturn(false);
+        when(dishRepository.save(any(Dish.class))).thenReturn(dish1);
+
+        // Act
+        List<Dish> createdDishes = dishService.saveDishes(dishes);
+
+        // Assert
+        assertEquals(dishes, createdDishes);
+        verify(dishRepository, times(1)).save(any(Dish.class));
     }
 }

@@ -60,5 +60,5 @@ public class Dish {
     @JoinTable(name = "dish_ingredients",
             joinColumns = @JoinColumn(name = "dishId"),
             inverseJoinColumns = @JoinColumn(name = "ingredientId"))
-    private List<Ingredient> ingredients = new ArrayList<>();;
+    private List<Ingredient> ingredients = new ArrayList<>();
 }

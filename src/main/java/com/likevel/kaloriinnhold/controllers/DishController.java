@@ -46,6 +46,11 @@ public class DishController {
         dishService.createNewDish(dish);
     }
 
+    @PostMapping("/addDishes")
+    public List<Dish> saveDishes(
+            @RequestBody final List<Dish> dishes) {
+        return dishService.saveDishes(dishes);
+    }
     //Put
     @PutMapping("/{id}")
     public void updateDish(@PathVariable("id") Long dishId,
