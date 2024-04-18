@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -31,7 +32,7 @@ import java.util.List;
 public class Dish {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id = 0L;
 
     @Column(name = "name")
     private String dishName;
@@ -51,7 +52,7 @@ public class Dish {
     @OneToMany(mappedBy = "dish", fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE},
             orphanRemoval = true)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
@@ -59,5 +60,5 @@ public class Dish {
     @JoinTable(name = "dish_ingredients",
             joinColumns = @JoinColumn(name = "dishId"),
             inverseJoinColumns = @JoinColumn(name = "ingredientId"))
-    private List<Ingredient> ingredients;
+    private List<Ingredient> ingredients = new ArrayList<>();;
 }

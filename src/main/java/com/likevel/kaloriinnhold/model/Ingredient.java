@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -45,5 +46,5 @@ public class Ingredient {
     @JsonIgnoreProperties("ingredients")
     @ManyToMany(mappedBy = "ingredients",
             cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.MERGE})
-    private List<Dish> dishes;
+    private List<Dish> dishes = new ArrayList<>(); // Initialize the dishes list
 }

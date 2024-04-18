@@ -40,16 +40,16 @@ public class DishService {
     private String appKey;
 
     //Get
-    public ResponseEntity<Object> getNutritionalData(String name, Long weight) {
-        String apiUrl = "https://api.edamam.com/api/nutrition-data";
-        String url = "%s?app_id=%s&app_key=%s&nutrition-type=cooking&ingr=%s%%%dg".formatted(apiUrl, appId, appKey, name, weight);
-        RestTemplate restTemplate = new RestTemplate();
-        try {
-            return ResponseEntity.ok(restTemplate.getForObject(url, Object.class));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid dish. Please check the spelling of the ingredient and try again.");
-        }
-    }
+//    public ResponseEntity<Object> getNutritionalData(String name, Long weight) {
+//        String apiUrl = "https://api.edamam.com/api/nutrition-data";
+//        String url = "%s?app_id=%s&app_key=%s&nutrition-type=cooking&ingr=%s%%%dg".formatted(apiUrl, appId, appKey, name, weight);
+//        RestTemplate restTemplate = new RestTemplate();
+//        try {
+//            return ResponseEntity.ok(restTemplate.getForObject(url, Object.class));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid dish. Please check the spelling of the ingredient and try again.");
+//        }
+//    }
 
     public List<Dish> getDishes() {
         return dishRepository.findAll();

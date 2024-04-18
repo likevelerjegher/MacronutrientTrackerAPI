@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,9 +28,17 @@ public class CommentService {
 
     public List<Comment> getCommentsByDishId(Long dishId) {
         Dish dish = dishRepository.findById(dishId)
-                .orElseThrow(() -> new ObjectExistedException(
-                        "dish with id " + dishId + " does not exist, therefore cannot view its comments."));
-        return dish.getComments();
+                .orElseThrow(() -> new ObjectNotFoundException(
+                        "Dish with id " + dishId + " does not exist, therefore cannot view its comments."));
+
+        List<Comment> comments = dish.getComments();
+
+        // If comments are null or empty, return an empty list
+        if (comments == null || comments.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return comments;
     }
 
     //Post
@@ -51,22 +60,23 @@ public class CommentService {
 
     //Put
     @Transactional
-    public void updateComment(Long commentId,
-                              String username,
-                              String commentText) {
+    public void updateComment(Long commentId, String username, String commentText) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ObjectNotFoundException(
                         "comment with id " + commentId + " does not exist, therefore cannot be updated."));
-        if (commentText != null && commentText.isEmpty() && Objects.equals(comment.getCommentText(), commentText)) {
-            Optional<Comment> commentOptional = commentRepository.findCommentByCommentText(commentText);
-            if (commentOptional.isPresent()) {
-                throw new ObjectExistedException("identical comment already exists.");
-            }
+
+        // Check if commentText is not null and not empty, and it's different from the existing one
+        if (commentText != null && !commentText.isEmpty() && !Objects.equals(comment.getCommentText(), commentText)) {
             comment.setCommentText(commentText);
         }
+
+        // Check if username is not null and not empty, and it's different from the existing one
         if (username != null && !username.isEmpty() && !Objects.equals(comment.getUsername(), username)) {
             comment.setUsername(username);
         }
+
+        // Save the updated comment
+        commentRepository.save(comment);
     }
 
     //Delete
@@ -81,11 +91,14 @@ public class CommentService {
     public void deleteComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ObjectNotFoundException(
-                        "comment with id " + commentId + " does not exist, therefore cannot be deleted."));
-        Dish dish = comment.getDish();
+                        "Comment with id " + commentId + " does not exist, therefore cannot be deleted."));
 
-        dish.getIngredients().remove(comment);
-        dishRepository.save(dish);
-        commentRepository.delete(comment);
+        Dish dish = comment.getDish();
+        if (dish != null) {
+            dish.getComments().remove(comment); // Remove comment from dish
+            dishRepository.save(dish); // Save dish to update the association
+        }
+
+        commentRepository.delete(comment); // Delete the comment
     }
 }
