@@ -199,7 +199,7 @@ class DishServiceTest {
         verify(cache, times(1)).clear();
     }
     @Test
-    public void testSaveDishes_WithNoExistingDishes_ShouldCreateDishes() {
+    void testSaveDishes_WithNoExistingDishes_ShouldCreateDishes() {
         // Arrange
         List<Dish> dishes = new ArrayList<>();
         Dish dish1 = new Dish();
