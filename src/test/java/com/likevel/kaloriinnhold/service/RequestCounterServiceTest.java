@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class RequestCounterServiceTest {
+class RequestCounterServiceTest {
     @Test
     void testIncrementRequestCount() {
         // Arrange
