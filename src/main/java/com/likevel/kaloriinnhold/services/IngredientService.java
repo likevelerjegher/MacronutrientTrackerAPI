@@ -8,6 +8,7 @@ import com.likevel.kaloriinnhold.repositories.DishRepository;
 import com.likevel.kaloriinnhold.repositories.IngredientRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,17 +18,11 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class IngredientService {
     private IngredientRepository ingredientRepository;
     private DishRepository dishRepository;
 
-    @Autowired
-    public IngredientService(IngredientRepository ingredientRepository,
-                             DishRepository dishRepository) {
-        this.ingredientRepository = ingredientRepository;
-        this.dishRepository = dishRepository;
-    }
 
     //Get
     public List<Ingredient> getIngredientsByDishId(Long dishId) {

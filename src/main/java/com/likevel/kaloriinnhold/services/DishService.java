@@ -10,8 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,20 +26,11 @@ public class DishService {
     private static final String DISH = "dish ";
     private static final Logger logger = LoggerFactory.getLogger(DishService.class);
 
-
-    @Autowired
-    public DishService(DishRepository dishRepository, CacheManager<String, Object> cache) {
-        this.dishRepository = dishRepository;
-        this.cache = cache;
-    }
-
-    @Value("${edamam.api.appId}")
-    private String appId;
-    @Value("${edamam.api.appKey}")
-    private String appKey;
-
     //Get
     public List<Dish> getDishes() {
+        RequestCounterService.incrementRequestCount();
+        int requestCount = RequestCounterService.getRequestCount();
+        logger.info("Current request count: {}", requestCount);
         return dishRepository.findAll();
     }
 
