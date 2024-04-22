@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RequestCounterServiceTest {
     @Test
-    public void testIncrementRequestCount() {
+    void testIncrementRequestCount() {
         // Arrange
         int initialCount = RequestCounterService.getRequestCount();
 
@@ -23,7 +23,7 @@ public class RequestCounterServiceTest {
     }
 
     @Test
-    public void testGetRequestCount() {
+    void testGetRequestCount() {
         // Arrange
         int expectedCount = RequestCounterService.getRequestCount();
 
