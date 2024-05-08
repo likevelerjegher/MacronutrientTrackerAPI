@@ -25,6 +25,10 @@ public class IngredientService {
 
 
     //Get
+    public Ingredient getIngredientById(Long ingredientId) {
+        Ingredient ingredient = ingredientRepository.findById(ingredientId).orElse(null);
+        return ingredient;
+    }
     public List<Ingredient> getIngredientsByDishId(Long dishId) {
         Dish dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new ObjectNotFoundException(
@@ -44,6 +48,14 @@ public class IngredientService {
     }
 
     //Post
+    public Ingredient createNewIngredient(Ingredient ingredient) {
+        Optional<Ingredient> ingredientOptional = Optional.ofNullable(ingredientRepository
+                .findIngredientByName(ingredient.getName()));
+        if (ingredientOptional.isPresent()) {
+            throw new ObjectExistedException("ingredient with this name already exists.");
+        }
+       return ingredientRepository.save(ingredient);
+    }
     public void addNewIngredientByDishId(Long dishId, Ingredient ingredientRequest) {
         Dish dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new ObjectNotFoundException(
@@ -99,6 +111,19 @@ public class IngredientService {
         if (ingredientProteins != null && ingredientProteins >= 0) ingredient.setProteins(ingredientProteins);
         if (ingredientCalories != null && ingredientCalories >= 0) ingredient.setCalories(ingredientCalories);
         if (ingredientWeight != null && ingredientWeight >= 0) ingredient.setWeight(ingredientWeight);
+    }
+    public Ingredient editIngredient(Ingredient newIngredient,Long ingredientId) {
+        return ingredientRepository.findById(ingredientId)
+                .map(ingredient ->{
+                    ingredient.setName(newIngredient.getName());
+                    ingredient.setWeight(newIngredient.getWeight());
+                    ingredient.setCalories(newIngredient.getCalories());
+                    ingredient.setFats(newIngredient.getFats());
+                    ingredient.setCarbs(newIngredient.getCarbs());
+                    ingredient.setProteins(newIngredient.getProteins());
+                    return ingredientRepository.save(ingredient);
+                }).orElseThrow(()->new ObjectNotFoundException(
+                        "ingredient id: " + ingredientId + "is not updated."));
     }
 
     //Delete

@@ -4,6 +4,7 @@ import com.likevel.kaloriinnhold.model.Dish;
 import com.likevel.kaloriinnhold.services.DishService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
+@CrossOrigin("http://localhost:3000")
 public class DishController {
     //Get
     private final DishService dishService;
@@ -52,11 +54,15 @@ public class DishController {
         return dishService.saveDishes(dishes);
     }
     //Put
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public void updateDish(@PathVariable("id") Long dishId,
                            @RequestParam(required = false) String name,
                            @RequestParam(required = false) Float servings) {
         dishService.updateDish(dishId, name, servings);
+    }
+    @PutMapping("/{id}")
+    public Dish editDish(@RequestBody Dish newDish, @PathVariable("id") Long dishId) {
+        return dishService.editDish(newDish, dishId);
     }
 
     //Delete

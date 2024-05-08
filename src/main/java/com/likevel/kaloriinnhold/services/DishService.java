@@ -34,17 +34,22 @@ public class DishService {
         return dishRepository.findAll();
     }
 
+//    public Dish getDishById(Long dishId) {
+//        Object cachedData = cache.get(DISH + dishId.toString());
+//        if (cachedData != null) {
+//            return (Dish) cachedData;
+//        } else {
+//            Dish dish = dishRepository.findById(dishId).orElse(null);
+//            if (dish != null) {
+//                cache.put(DISH + dishId, dish);
+//            }
+//            return dish;
+//        }
+//    }
     public Dish getDishById(Long dishId) {
-        Object cachedData = cache.get(DISH + dishId.toString());
-        if (cachedData != null) {
-            return (Dish) cachedData;
-        } else {
-            Dish dish = dishRepository.findById(dishId).orElse(null);
-            if (dish != null) {
-                cache.put(DISH + dishId, dish);
-            }
-            return dish;
-        }
+        Dish dish = dishRepository.findById(dishId).orElse(null);
+        return dish;
+
     }
 
     public List<Dish> getDishesWithLessOrSameCalories(Integer calories) {
@@ -96,6 +101,16 @@ public class DishService {
         cache.put(DISH + dishId, dish);
     }
 
+    public Dish editDish(Dish newDish,Long dishId) {
+        return dishRepository.findById(dishId)
+                .map(dish ->{
+                    dish.setDishName(newDish.getDishName());
+                    dish.setServings(newDish.getServings());
+                    return dishRepository.save(dish);
+                }).orElseThrow(()->new ObjectNotFoundException(
+                        "dish id: " + dishId + "is not updated."));
+    }
+
     //Delete
     public void deleteDish(Long dishId) {
         boolean exists = dishRepository.existsById(dishId);
@@ -111,6 +126,4 @@ public class DishService {
         dishRepository.deleteAll();
         cache.clear();
     }
-
-
 }

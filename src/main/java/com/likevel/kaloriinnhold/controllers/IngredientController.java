@@ -5,6 +5,7 @@ import com.likevel.kaloriinnhold.model.Ingredient;
 import com.likevel.kaloriinnhold.services.IngredientService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import java.util.List;
 @Tag(name = "Ingredient", description = "Managing ingredients.")
 @RestController
 @RequestMapping("/api")
+@CrossOrigin("http://localhost:3000")
 public class IngredientController {
     private final IngredientService ingredientService;
 
@@ -28,6 +30,10 @@ public class IngredientController {
     }
 
     //Get
+    @GetMapping("ingredients/{id}")
+    public Ingredient getIngredientById(@PathVariable(value = "id") Long ingredientId) {
+        return ingredientService.getIngredientById(ingredientId);
+    }
     @GetMapping("dishes/{dishId}/ingredients")
     public List<Ingredient> getIngredientsByDishId(@PathVariable(value = "dishId") Long dishId) {
         return ingredientService.getIngredientsByDishId(dishId);
@@ -44,6 +50,11 @@ public class IngredientController {
     }
 
     //Post
+    @PostMapping("/ingredient")
+    public Ingredient createNewIngredient(@RequestBody Ingredient ingredient) {
+        return ingredientService.createNewIngredient(ingredient);
+    }
+
     @PostMapping("dishes/{dishId}/ingredient")
     public void addNewIngredientByDishId(@PathVariable(value = "dishId") Long dishId,
                                          @RequestBody Ingredient ingredient) {
@@ -66,6 +77,10 @@ public class IngredientController {
                                  @RequestParam(required = false) Integer calories,
                                  @RequestParam(required = false) Integer weight) {
         ingredientService.updateIngredient(ingredientId, name, fats, carbs, proteins, calories, weight);
+    }
+    @PutMapping("ingredient/{id}")
+    public Ingredient editDish(@RequestBody Ingredient newIngredient, @PathVariable("id") Long ingredientId) {
+        return ingredientService.editIngredient(newIngredient, ingredientId);
     }
 
     //Delete
